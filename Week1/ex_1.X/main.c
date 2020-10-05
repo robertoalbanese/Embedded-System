@@ -43,6 +43,6 @@
 int main(void) {
     TRISBbits.TRISB0 = 0;
     LATBbits.LATB0 = 1;
-    //while(1); Use if you want the controller to maintain the led on.
+    while(1); //Use if you want the controller to maintain the led on.
     return 0;
 }
