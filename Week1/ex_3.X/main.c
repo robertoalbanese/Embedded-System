@@ -45,8 +45,7 @@ int main(void) {
         currButt = PORTEbits.RE8;
         if ((prevButt^currButt) == 1) {
             if (currButt == 0) {
-                light = light^1;
-                LATBbits.LATB0 = light;
+                LATBbits.LATB0 = !LATBbits.LATB0;
             }
         }
         prevButt = currButt;
