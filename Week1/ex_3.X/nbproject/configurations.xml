@@ -172,7 +172,8 @@
         <property key="warn-section-align" value="false"/>
       </C30-LD>
       <C30Global>
-        <property key="common-include-directories" value=""/>
+        <property key="common-include-directories"
+                  value="C:\Program Files\Microchip\xc16\v1.60\support\dsPIC30F\h"/>
         <property key="dual-boot-partition" value="0"/>
         <property key="fast-math" value="false"/>
         <property key="generic-16-bit" value="false"/>
