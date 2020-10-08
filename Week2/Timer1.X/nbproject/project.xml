@@ -3,7 +3,7 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>Timer1</name>
+            <name>Timer_1</name>
             <creation-uuid>f9902d2f-a254-451f-a6a9-fe4767b73022</creation-uuid>
             <make-project-type>0</make-project-type>
             <c-extensions>c</c-extensions>

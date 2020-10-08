@@ -88,9 +88,9 @@ Default Scalar Model: Small
 section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
 .text                        0x100                0xce           0x135  (309)
-.text                        0x1ce                0x48            0x6c  (108)
+.text                        0x1ce                0x4a            0x6f  (111)
 
-                 Total "program" memory used (bytes):          0x1a1  (417) <1%
+                 Total "program" memory used (bytes):          0x1a4  (420) <1%
 
 
 "data" Memory  [Origin = 0x800, Length = 0x800]
@@ -246,7 +246,7 @@ __RESERVED2
 
 __FGS             0xf8000a          0x2
  *(__FGS.sec*)
- __FGS.sec        0xf8000a          0x2 /CW/_FGS T»
+ __FGS.sec        0xf8000a          0x2 /CW/_FGS5¹
                   0xf8000a                  __FGS.sec
 
 __FICD
@@ -261,18 +261,18 @@ userdata
 .comment
  *(.comment)
 
-.debug_info       0x000000        0x519
+.debug_info       0x000000        0x529
  *(.debug_info)
- .debug_info      0x000000        0x519 build/default/debug/main.o
+ .debug_info      0x000000        0x529 build/default/debug/main.o
  *(.gnu.linkonce.wi.*)
 
 .debug_abbrev     0x000000         0x9d
  *(.debug_abbrev)
  .debug_abbrev    0x000000         0x9d build/default/debug/main.o
 
-.debug_line       0x000000        0x10e
+.debug_line       0x000000        0x10d
  *(.debug_line)
- .debug_line      0x000000        0x10e build/default/debug/main.o
+ .debug_line      0x000000        0x10d build/default/debug/main.o
 
 .debug_frame      0x000000         0x2e
  *(.debug_frame)
@@ -1009,7 +1009,7 @@ LOAD c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a
 LOAD c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\liblega-c-elf.a
 END GROUP
 OUTPUT(dist/default/debug/ex_3.X.debug.elf elf32-pic30)
-LOAD /CW/_FGS T»
+LOAD /CW/_FGS5¹
 LOAD default_isr
 
 .debug_pubtypes
@@ -1040,6 +1040,6 @@ __c30_signature
  .config_FCKSMEN
                   0xf80000          0x2 build/default/debug/main.o
 
-.text             0x0001ce         0x48
- .text            0x0001ce         0x48 build/default/debug/main.o
+.text             0x0001ce         0x4a
+ .text            0x0001ce         0x4a build/default/debug/main.o
                   0x0001ce                  _main
