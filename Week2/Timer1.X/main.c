@@ -36,14 +36,16 @@
 
 #define TIMER1 1
 #define TIMER2 2
+
+void choose_prescaler(int ms, int* ps, int* tckps);
 void tmr_setup_period(int timer, int ms);
 void tmr_wait_period(int timer);
 
 int main() {
     // initialization code
     TRISBbits.TRISB0 = 0;
-    
-    tmr_setup_period(TIMER1, 1);
+
+    tmr_setup_period(TIMER1, 500);
     while (1) {
         // code to blink LED
         tmr_wait_period(TIMER1);
@@ -51,30 +53,53 @@ int main() {
     }
 }
 
-void tmr_setup_period(int timer, int ms) {
-    if (timer == TIMER1) {
-        TMR1 = 0; //reset the timer counter
-        // Fcy = 1843200 (number of clocks in one second)
-        // in 1 second there would be 921600 clocks steps
-        // this is too high to be put in a 16 bit register (max 65535)
-        // If we set a prescaler of 1:64 we have 1843200/16 = 28800 clock steps, OK!
-        float rate_in_sec = (float) ms / 1000000;
-        PR1 = 28800 * rate_in_sec;
+void choose_prescaler(int ms, int* pr, int* tckps) {
+    long ticks = 1843.2 * ms;
+    if (ticks <= 65535) {
+        //prescaler 1:1
+        *pr = ticks;
+        *tckps = 0;
+        return;
+    }
+    ticks = ticks / 8;
+    if (ticks <= 65535) {
+        //prescaler 1:8
+        *pr = ticks;
+        *tckps = 1;
+        return;
+    }
+    ticks = ticks / 8;
+    if (ticks <= 65535) {
+        //prescaler 1:64
+        *pr = ticks;
+        *tckps = 2;
+        return;
+    }
+    ticks = ticks / 4;
+    if (ticks <= 65535) {
+        //prescaler 1:256 
+        *pr = ticks;
+        *tckps = 3;
+        return;
+    }
+}
 
-        T1CONbits.TCKPS = 2; //prescaler 1:64
-        T1CONbits.TCS = 0; //use internal clock
+void tmr_setup_period(int timer, int ms) {
+    int pr;
+    int tckps;
+    if (timer == TIMER1) {
+        T1CONbits.TON = 0;
+        TMR1 = 0; //reset the timer counter
+        choose_prescaler(ms, &pr, &tckps);
+        PR1 = pr;
+        T1CONbits.TCKPS = tckps; //prescaler 1:64
         T1CONbits.TON = 1; //starts the timer
     } else if (timer == TIMER2) {
+        T2CONbits.TON = 0;
         TMR2 = 0; //reset the timer counter
-        // Fcy = 1843200 (number of clocks in one second)
-        // in 1 second there would be 921600 clocks steps
-        // this is too high to be put in a 16 bit register (max 65535)
-        // If we set a prescaler of 1:64 we have 1843200/16 = 28800 clock steps, OK!
-        float rate_in_sec = (float) ms / 1000;
-        PR2 = 28800; // * rate_in_sec;
-
-        T2CONbits.TCKPS = 2; //prescaler 1:64
-        T2CONbits.TCS = 0; //use internal clock
+        choose_prescaler(ms, &pr, &tckps);
+        PR2 = pr;
+        T2CONbits.TCKPS = tckps; //prescaler 1:64
         T2CONbits.TON = 1; //starts the timer
     }
 }
@@ -83,18 +108,14 @@ void tmr_wait_period(int timer) {
     switch (timer) {
         case TIMER1:
         {
-            while (IFS0bits.T1IF == 0) {
-            }
+            while (IFS0bits.T1IF == 0);
             IFS0bits.T1IF = 0;
-            TMR1 = 0;
             break;
         }
         case TIMER2:
         {
-             while (IFS0bits.T2IF == 0) {
-            }
+            while (IFS0bits.T2IF == 0);
             IFS0bits.T2IF = 0;
-            TMR2 = 0;
             break;
         }
     }
