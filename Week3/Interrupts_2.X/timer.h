@@ -16,8 +16,8 @@
 #define TIMER2 2
 
 void tmr_wait_ms(int timer,int ms);
-void tar_setup_period(int timer , int ms);
-void tar_wait_period(int timer);
+void tmr_setup_period(int timer , int ms);
+void tmr_wait_period(int timer);
 
 #endif /* __cplusplus */
 
