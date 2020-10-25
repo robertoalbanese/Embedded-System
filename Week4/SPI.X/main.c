@@ -6,6 +6,7 @@
  */
 
 #include <stdio.h>
+#include "timer.h"
 #include "xc.h"
 
 int main(void) {
@@ -15,6 +16,9 @@ int main(void) {
     SPI1CONbits.PPRE = 3; // 1:1 primary prescaler
     SPI1CONbits.SPRE = 6; // 2:1 secondary prescaler
     SPI1STATbits.SPIEN = 1; // enable SPI
+    
+    tmr_setup_period(TIMER1, 1000);  //Setup TIMER 1 period
+    tmr_wait_ms(TIMER1, 1000);
 
     char str[] = "Hello World!";
     int i = 0;
