@@ -240,7 +240,7 @@ __RESERVED2
 
 __FGS             0xf8000a          0x2
  *(__FGS.sec*)
- __FGS.sec        0xf8000a          0x2 /CW/_FGS
+ __FGS.sec        0xf8000a          0x2 /CW/_FGS–ö 
                   0xf8000a                  __FGS.sec
 
 __FICD
@@ -1003,7 +1003,7 @@ LOAD c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a
 LOAD c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\liblega-c-elf.a
 END GROUP
 OUTPUT(dist/default/production/ex_1.X.production.elf elf32-pic30)
-LOAD /CW/_FGS
+LOAD /CW/_FGS–ö 
 LOAD default_isr
 
 .debug_pubtypes

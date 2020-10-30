@@ -33,25 +33,9 @@
 // Use project enums instead of #define for ON and OFF.
 
 #include <xc.h>
+#include "timer.h"
 
-#define TIMER1 1
-#define TIMER2 2
-
-void choose_prescaler(int ms, int* ps, int* tckps);
-void tmr_setup_period(int timer, int ms);
-void tmr_wait_period(int timer);
-
-int main() {
-    // initialization code
-    TRISBbits.TRISB0 = 0;
-
-    tmr_setup_period(TIMER1, 500);
-    while (1) {
-        // code to blink LED
-        tmr_wait_period(TIMER1);
-        LATBbits.LATB0 = !LATBbits.LATB0;
-    }
-}
+void choose_prescaler(int ms, int* pr, int* tckps);
 
 void choose_prescaler(int ms, int* pr, int* tckps) {
     long ticks = 1843.2 * ms;
@@ -82,6 +66,50 @@ void choose_prescaler(int ms, int* pr, int* tckps) {
         *tckps = 3;
         return;
     }
+}
+
+void tmr_wait_ms(int timer, int ms) {
+    int pr;
+    int tckps;
+
+    switch (timer) {
+        case 1:
+        {
+            T1CONbits.TON = 0;
+            TMR1 = 0;
+            T1CONbits.TCS = 0;
+            choose_prescaler(ms, &pr, &tckps);
+            T1CONbits.TCKPS = tckps;
+            PR1 = pr;
+            T1CONbits.TON = 1;
+
+            //while loop waiting for the flag go up
+            while (IFS0bits.T1IF == 0);
+
+            IFS0bits.T1IF = 0; // reset TxIF to 0 again 
+            T1CONbits.TON = 0; // otherwise another timer cannot start
+            break;
+        }
+
+        case 2:
+        {
+            T2CONbits.TON = 0;
+            TMR2 = 0;
+            T2CONbits.TCS = 0;
+            choose_prescaler(ms, &pr, &tckps);
+            T2CONbits.TCKPS = tckps;
+            PR2 = pr;
+            T2CONbits.TON = 1;
+
+            //while loop waiting for the flag go up
+            while (IFS0bits.T2IF == 0);
+
+            IFS0bits.T2IF = 0; // reset TxIF to 0 again 
+            T2CONbits.TON = 0; // otherwise another timer cannot start
+            break;
+        }
+    }
+
 }
 
 void tmr_setup_period(int timer, int ms) {
