@@ -20,6 +20,7 @@ Command:
   -Lc:/program files/microchip/xc16/v1.60/bin/bin/../../support/dsPIC33F/gld \
   build/default/production/main.o \
   build/default/production/timer.o \
+  build/default/production/spi.o \
   --defsym=__MPLAB_BUILD=1 \
   -Tp30F4011.gld.00 \
   --stack=16 \
@@ -84,9 +85,9 @@ Default Scalar Model: Small
 section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
 .text                        0x100               0x2a2           0x3f3  (1011)
-.text                        0x3a2               0x266           0x399  (921)
+.text                        0x3a2               0x2aa           0x3ff  (1023)
 
-                 Total "program" memory used (bytes):          0x78c  (1932) 3%
+                 Total "program" memory used (bytes):          0x7f2  (2034) 4%
 
 
 "data" Memory  [Origin = 0x800, Length = 0x800]
@@ -113,8 +114,8 @@ External Symbols in Program Memory (by address):
 
                   0x000100                  __resetPRI
                   0x00013c                  __psv_init
-                  0x000152                  __data_init_standard
                   0x000152                  __data_init
+                  0x000152                  __data_init_standard
                   0x0001c8                  __DefaultInterrupt
                   0x0001ce                  ___fixsfsi
                   0x000210                  ___floatsisf
@@ -131,14 +132,17 @@ External Symbols in Program Memory (by address):
                   0x000474                  _tmr_wait_ms
                   0x000504                  _tmr_setup_period
                   0x000570                  _tmr_wait_period
-                  0x0005a2                  _setup_SPI
-                  0x0005be                  _exercise_1
-                  0x0005f2                  _exercise_2
-                  0x0005f8                  _exercise_3
-                  0x0005fe                  _main
+                  0x0005a2                  _U2ART_config
+                  0x0005ba                  _exercise_1
+                  0x0005d8                  _exercise_2
+                  0x0005ee                  _exercise_3
+                  0x000610                  _main
+                  0x00061a                  _spi_config
+                  0x000636                  _spi_send_char
 
 External Symbols in Program Memory (by name):
 
+                  0x0005a2                  _U2ART_config
                   0x0001c8                  __DefaultInterrupt
                   0x0001ce                  ___fixsfsi
                   0x0002a8                  ___floatdisf
@@ -156,11 +160,12 @@ External Symbols in Program Memory (by name):
                   0x00013c                  __psv_init
                   0x000100                  __resetPRI
                   0x0003a2                  _choose_prescaler
-                  0x0005be                  _exercise_1
-                  0x0005f2                  _exercise_2
-                  0x0005f8                  _exercise_3
-                  0x0005fe                  _main
-                  0x0005a2                  _setup_SPI
+                  0x0005ba                  _exercise_1
+                  0x0005d8                  _exercise_2
+                  0x0005ee                  _exercise_3
+                  0x000610                  _main
+                  0x00061a                  _spi_config
+                  0x000636                  _spi_send_char
                   0x000504                  _tmr_setup_period
                   0x000474                  _tmr_wait_ms
                   0x000570                  _tmr_wait_period
@@ -192,6 +197,7 @@ Linker script and memory map
 
 LOAD build/default/production/main.o
 LOAD build/default/production/timer.o
+LOAD build/default/production/spi.o
                     0x0001                  __MPLAB_BUILD = 0x1
 LOAD p30F4011
 LOAD c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libfx-elf.a
@@ -318,31 +324,36 @@ userdata
 .comment
  *(.comment)
 
-.debug_info       0x000000        0xe21
+.debug_info       0x000000       0x1042
  *(.debug_info)
- .debug_info      0x000000        0x76a build/default/production/main.o
- .debug_info      0x00076a        0x6b7 build/default/production/timer.o
+ .debug_info      0x000000        0x559 build/default/production/main.o
+ .debug_info      0x000559        0x6b7 build/default/production/timer.o
+ .debug_info      0x000c10        0x432 build/default/production/spi.o
  *(.gnu.linkonce.wi.*)
 
-.debug_abbrev     0x000000        0x1ec
+.debug_abbrev     0x000000        0x307
  *(.debug_abbrev)
- .debug_abbrev    0x000000         0xfe build/default/production/main.o
- .debug_abbrev    0x0000fe         0xee build/default/production/timer.o
+ .debug_abbrev    0x000000        0x130 build/default/production/main.o
+ .debug_abbrev    0x000130         0xee build/default/production/timer.o
+ .debug_abbrev    0x00021e         0xe9 build/default/production/spi.o
 
-.debug_line       0x000000        0x26b
+.debug_line       0x000000        0x37b
  *(.debug_line)
- .debug_line      0x000000        0x11b build/default/production/main.o
- .debug_line      0x00011b        0x150 build/default/production/timer.o
+ .debug_line      0x000000        0x121 build/default/production/main.o
+ .debug_line      0x000121        0x150 build/default/production/timer.o
+ .debug_line      0x000271        0x10a build/default/production/spi.o
 
-.debug_frame      0x000000        0x11e
+.debug_frame      0x000000        0x166
  *(.debug_frame)
  .debug_frame     0x000000         0x96 build/default/production/main.o
  .debug_frame     0x000096         0x88 build/default/production/timer.o
+ .debug_frame     0x00011e         0x48 build/default/production/spi.o
 
-.debug_str        0x000000         0x4b
+.debug_str        0x000000         0x64
  *(.debug_str)
  .debug_str       0x000000         0x2e build/default/production/main.o
  .debug_str       0x00002e         0x1d build/default/production/timer.o
+ .debug_str       0x00004b         0x19 build/default/production/spi.o
 
 .debug_loc
  *(.debug_loc)
@@ -351,22 +362,26 @@ userdata
  *(.debug_macinfo)
 
 .debug_pubnames
-                  0x000000         0xb6
+                  0x000000         0xec
  *(.debug_pubnames)
  .debug_pubnames
-                  0x000000         0x56 build/default/production/main.o
+                  0x000000         0x59 build/default/production/main.o
  .debug_pubnames
-                  0x000056         0x60 build/default/production/timer.o
+                  0x000059         0x60 build/default/production/timer.o
+ .debug_pubnames
+                  0x0000b9         0x33 build/default/production/spi.o
 
 .debug_ranges
  *(.debug_ranges)
 
-.debug_aranges    0x000000         0x30
+.debug_aranges    0x000000         0x48
  *(.debug_aranges)
  .debug_aranges
                   0x000000         0x18 build/default/production/main.o
  .debug_aranges
                   0x000018         0x18 build/default/production/timer.o
+ .debug_aranges
+                  0x000030         0x18 build/default/production/spi.o
                     0x0000                  WREG0 = 0x0
                     0x0000                  _WREG0 = 0x0
                     0x0002                  WREG1 = 0x2
@@ -1078,50 +1093,57 @@ OUTPUT(dist/default/production/UART_basic.X.production.elf elf32-pic30)
 LOAD default_isr
 
 .debug_pubtypes
-                  0x000030        0x121
+                  0x000048        0x140
  .debug_pubtypes
-                  0x000030         0xa7 build/default/production/main.o
+                  0x000048         0x5f build/default/production/main.o
  .debug_pubtypes
-                  0x0000d7         0x7a build/default/production/timer.o
+                  0x0000a7         0x7a build/default/production/timer.o
+ .debug_pubtypes
+                  0x000121         0x67 build/default/production/spi.o
 
 __c30_signature
-                  0x000151         0x4e
+                  0x000188         0x54
  __c30_signature
-                  0x000151          0x6 build/default/production/main.o
+                  0x000188          0x6 build/default/production/main.o
  __c30_signature
-                  0x000157          0x6 build/default/production/timer.o
+                  0x00018e          0x6 build/default/production/timer.o
  __c30_signature
-                  0x00015d          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\liblega-pic30-elf.a(crt0_standard.o)
+                  0x000194          0x6 build/default/production/spi.o
  __c30_signature
-                  0x000163          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\liblega-pic30-elf.a(data_init_standard.o)
+                  0x00019a          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\liblega-pic30-elf.a(crt0_standard.o)
  __c30_signature
-                  0x000169          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(fixsfsi.eo)
+                  0x0001a0          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\liblega-pic30-elf.a(data_init_standard.o)
  __c30_signature
-                  0x00016f          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(floatsisf.eo)
+                  0x0001a6          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(fixsfsi.eo)
  __c30_signature
-                  0x000175          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(funpack.eo)
+                  0x0001ac          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(floatsisf.eo)
  __c30_signature
-                  0x00017b          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(mulsf3.eo)
+                  0x0001b2          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(funpack.eo)
  __c30_signature
-                  0x000181          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(floatdisf.eo)
+                  0x0001b8          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(mulsf3.eo)
  __c30_signature
-                  0x000187          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(floatundisf.eo)
+                  0x0001be          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(floatdisf.eo)
  __c30_signature
-                  0x00018d          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(fpack.eo)
+                  0x0001c4          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(floatundisf.eo)
  __c30_signature
-                  0x000193          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(funpack2.eo)
+                  0x0001ca          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(fpack.eo)
  __c30_signature
-                  0x000199          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(futil.eo)
+                  0x0001d0          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(funpack2.eo)
+ __c30_signature
+                  0x0001d6          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(futil.eo)
 
-.text             0x0003a2        0x266
+.text             0x0003a2        0x2aa
  .text            0x0003a2        0x200 build/default/production/timer.o
                   0x0003a2                  _choose_prescaler
                   0x000474                  _tmr_wait_ms
                   0x000504                  _tmr_setup_period
                   0x000570                  _tmr_wait_period
- .text            0x0005a2         0x66 build/default/production/main.o
-                  0x0005a2                  _setup_SPI
-                  0x0005be                  _exercise_1
-                  0x0005f2                  _exercise_2
-                  0x0005f8                  _exercise_3
-                  0x0005fe                  _main
+ .text            0x0005a2         0x78 build/default/production/main.o
+                  0x0005a2                  _U2ART_config
+                  0x0005ba                  _exercise_1
+                  0x0005d8                  _exercise_2
+                  0x0005ee                  _exercise_3
+                  0x000610                  _main
+ .text            0x00061a         0x32 build/default/production/spi.o
+                  0x00061a                  _spi_config
+                  0x000636                  _spi_send_char
