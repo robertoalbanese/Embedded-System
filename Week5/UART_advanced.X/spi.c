@@ -18,6 +18,26 @@ void spi_config() {
     SPI1STATbits.SPIEN = 1; // enable SPI
 }
 
+void spi_clear_row(char row) {
+    int i = 0;
+    spi_send_char(row);
+    while (i < 16) {
+        spi_send_char(' ');
+        i++;
+    }
+    spi_send_char(0x80);
+}
+
+void spi_send_string(char *c) {
+    int i;
+    while (c[i] != '\0') {
+        if (i == 17)
+            spi_send_char(0xC0);
+        spi_send_char(c[i]);
+        i++;
+    }
+}
+
 void spi_send_char(char c) {
     while (SPI1STATbits.SPITBF == 1);
     SPI1BUF = c;

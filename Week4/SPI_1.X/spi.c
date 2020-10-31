@@ -30,7 +30,7 @@ int main(void) {
 
     char str[] = "Hello World!";
     int i = 0;
-    while (i != '\0') {
+    while (str[i] != '\0') {
         if (i == 17)
             spi_send_char(0xC0);
         spi_send_char(str[i]);

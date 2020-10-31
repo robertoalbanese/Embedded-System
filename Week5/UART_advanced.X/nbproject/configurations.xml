@@ -7,6 +7,7 @@
       <itemPath>spi.h</itemPath>
       <itemPath>timer.h</itemPath>
       <itemPath>uart.h</itemPath>
+      <itemPath>buttons.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -19,6 +20,7 @@
       <itemPath>spi.c</itemPath>
       <itemPath>timer.c</itemPath>
       <itemPath>uart.c</itemPath>
+      <itemPath>buttons.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -239,7 +241,7 @@
         <property key="uart1io.uartioenabled" value="false"/>
         <property key="uart2io.output" value="window"/>
         <property key="uart2io.outputfile" value=""/>
-        <property key="uart2io.uartioenabled" value="false"/>
+        <property key="uart2io.uartioenabled" value="true"/>
         <property key="uart3io.output" value="window"/>
         <property key="uart3io.outputfile" value=""/>
         <property key="uart3io.uartioenabled" value="false"/>
