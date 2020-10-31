@@ -16,7 +16,6 @@ int main(void) {
     SPI1CONbits.SPRE = 6; // 2:1 secondary prescaler
     SPI1STATbits.SPIEN = 1; // enable SPI
     
-    tmr_setup_period(TIMER1, 1000);
     tmr_wait_ms(TIMER1, 1000);
     
     TRISEbits.TRISE8 = 1; //Button S5 input

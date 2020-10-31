@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=UART(basic).X
+PROJECTNAME=UART_basic.X
 
 # Active Configuration
 DEFAULTCONF=default
