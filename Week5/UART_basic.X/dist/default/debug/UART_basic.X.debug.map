@@ -88,9 +88,9 @@ Default Scalar Model: Small
 section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
 .text                        0x100               0x2a2           0x3f3  (1011)
-.text                        0x3a2               0x28a           0x3cf  (975)
+.text                        0x3a2               0x2fc           0x47a  (1146)
 
-                 Total "program" memory used (bytes):          0x7c2  (1986) 4%
+                 Total "program" memory used (bytes):          0x86d  (2157) 4%
 
 
 "data" Memory  [Origin = 0x800, Length = 0x800]
@@ -135,17 +135,19 @@ External Symbols in Program Memory (by address):
                   0x000474                  _tmr_wait_ms
                   0x000504                  _tmr_setup_period
                   0x000570                  _tmr_wait_period
-                  0x0005a2                  _U2ART_config
-                  0x0005ba                  _exercise_1
-                  0x0005e4                  _exercise_2
-                  0x0005ea                  _exercise_3
-                  0x0005f0                  _main
-                  0x0005fa                  _spi_config
-                  0x000616                  _spi_send_char
+                  0x0005a2                  _spi_config
+                  0x0005be                  _spi_clear_row
+                  0x0005e0                  _spi_send_string
+                  0x00060c                  _spi_send_char
+                  0x000622                  _U2ART_config
+                  0x00063a                  _exercise_1
+                  0x00065a                  _exercise_2
+                  0x000670                  _exercise_3
+                  0x000694                  _main
 
 External Symbols in Program Memory (by name):
 
-                  0x0005a2                  _U2ART_config
+                  0x000622                  _U2ART_config
                   0x0001c8                  __DefaultInterrupt
                   0x0001ce                  ___fixsfsi
                   0x0002a8                  ___floatdisf
@@ -163,12 +165,14 @@ External Symbols in Program Memory (by name):
                   0x00013c                  __psv_init
                   0x000100                  __resetPRI
                   0x0003a2                  _choose_prescaler
-                  0x0005ba                  _exercise_1
-                  0x0005e4                  _exercise_2
-                  0x0005ea                  _exercise_3
-                  0x0005f0                  _main
-                  0x0005fa                  _spi_config
-                  0x000616                  _spi_send_char
+                  0x00063a                  _exercise_1
+                  0x00065a                  _exercise_2
+                  0x000670                  _exercise_3
+                  0x000694                  _main
+                  0x0005be                  _spi_clear_row
+                  0x0005a2                  _spi_config
+                  0x00060c                  _spi_send_char
+                  0x0005e0                  _spi_send_string
                   0x000504                  _tmr_setup_period
                   0x000474                  _tmr_wait_ms
                   0x000570                  _tmr_wait_period
@@ -330,36 +334,36 @@ userdata
 .comment
  *(.comment)
 
-.debug_info       0x000000       0x10b4
+.debug_info       0x000000       0x1063
  *(.debug_info)
- .debug_info      0x000000        0x5cb build/default/debug/main.o
- .debug_info      0x0005cb        0x6b7 build/default/debug/timer.o
- .debug_info      0x000c82        0x432 build/default/debug/spi.o
+ .debug_info      0x000000        0x4fc build/default/debug/main.o
+ .debug_info      0x0004fc        0x6b7 build/default/debug/timer.o
+ .debug_info      0x000bb3        0x4b0 build/default/debug/spi.o
  *(.gnu.linkonce.wi.*)
 
-.debug_abbrev     0x000000        0x2eb
+.debug_abbrev     0x000000        0x2ed
  *(.debug_abbrev)
- .debug_abbrev    0x000000        0x114 build/default/debug/main.o
- .debug_abbrev    0x000114         0xee build/default/debug/timer.o
- .debug_abbrev    0x000202         0xe9 build/default/debug/spi.o
+ .debug_abbrev    0x000000         0xfe build/default/debug/main.o
+ .debug_abbrev    0x0000fe         0xee build/default/debug/timer.o
+ .debug_abbrev    0x0001ec        0x101 build/default/debug/spi.o
 
-.debug_line       0x000000        0x371
+.debug_line       0x000000        0x38c
  *(.debug_line)
- .debug_line      0x000000        0x117 build/default/debug/main.o
- .debug_line      0x000117        0x150 build/default/debug/timer.o
- .debug_line      0x000267        0x10a build/default/debug/spi.o
+ .debug_line      0x000000        0x121 build/default/debug/main.o
+ .debug_line      0x000121        0x150 build/default/debug/timer.o
+ .debug_line      0x000271        0x11b build/default/debug/spi.o
 
-.debug_frame      0x000000        0x166
+.debug_frame      0x000000        0x19a
  *(.debug_frame)
  .debug_frame     0x000000         0x96 build/default/debug/main.o
  .debug_frame     0x000096         0x88 build/default/debug/timer.o
- .debug_frame     0x00011e         0x48 build/default/debug/spi.o
+ .debug_frame     0x00011e         0x7c build/default/debug/spi.o
 
-.debug_str        0x000000         0x58
+.debug_str        0x000000         0x4b
  *(.debug_str)
- .debug_str       0x000000         0x22 build/default/debug/main.o
- .debug_str       0x000022         0x1d build/default/debug/timer.o
- .debug_str       0x00003f         0x19 build/default/debug/spi.o
+ .debug_str       0x000000         0x15 build/default/debug/main.o
+ .debug_str       0x000015         0x1d build/default/debug/timer.o
+ .debug_str       0x000032         0x19 build/default/debug/spi.o
 
 .debug_loc
  *(.debug_loc)
@@ -368,14 +372,14 @@ userdata
  *(.debug_macinfo)
 
 .debug_pubnames
-                  0x000000         0xec
+                  0x000000        0x112
  *(.debug_pubnames)
  .debug_pubnames
                   0x000000         0x59 build/default/debug/main.o
  .debug_pubnames
                   0x000059         0x60 build/default/debug/timer.o
  .debug_pubnames
-                  0x0000b9         0x33 build/default/debug/spi.o
+                  0x0000b9         0x59 build/default/debug/spi.o
 
 .debug_ranges
  *(.debug_ranges)
@@ -1099,57 +1103,59 @@ OUTPUT(dist/default/debug/UART_basic.X.debug.elf elf32-pic30)
 LOAD default_isr
 
 .debug_pubtypes
-                  0x000048        0x165
+                  0x000048        0x140
  .debug_pubtypes
-                  0x000048         0x84 build/default/debug/main.o
+                  0x000048         0x5f build/default/debug/main.o
  .debug_pubtypes
-                  0x0000cc         0x7a build/default/debug/timer.o
+                  0x0000a7         0x7a build/default/debug/timer.o
  .debug_pubtypes
-                  0x000146         0x67 build/default/debug/spi.o
+                  0x000121         0x67 build/default/debug/spi.o
 
 __c30_signature
-                  0x0001ad         0x54
+                  0x000188         0x54
  __c30_signature
-                  0x0001ad          0x6 build/default/debug/main.o
+                  0x000188          0x6 build/default/debug/main.o
  __c30_signature
-                  0x0001b3          0x6 build/default/debug/timer.o
+                  0x00018e          0x6 build/default/debug/timer.o
  __c30_signature
-                  0x0001b9          0x6 build/default/debug/spi.o
+                  0x000194          0x6 build/default/debug/spi.o
  __c30_signature
-                  0x0001bf          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\liblega-pic30-elf.a(crt0_standard.o)
+                  0x00019a          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\liblega-pic30-elf.a(crt0_standard.o)
  __c30_signature
-                  0x0001c5          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\liblega-pic30-elf.a(data_init_standard.o)
+                  0x0001a0          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\liblega-pic30-elf.a(data_init_standard.o)
  __c30_signature
-                  0x0001cb          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(fixsfsi.eo)
+                  0x0001a6          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(fixsfsi.eo)
  __c30_signature
-                  0x0001d1          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(floatsisf.eo)
+                  0x0001ac          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(floatsisf.eo)
  __c30_signature
-                  0x0001d7          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(funpack.eo)
+                  0x0001b2          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(funpack.eo)
  __c30_signature
-                  0x0001dd          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(mulsf3.eo)
+                  0x0001b8          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(mulsf3.eo)
  __c30_signature
-                  0x0001e3          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(floatdisf.eo)
+                  0x0001be          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(floatdisf.eo)
  __c30_signature
-                  0x0001e9          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(floatundisf.eo)
+                  0x0001c4          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(floatundisf.eo)
  __c30_signature
-                  0x0001ef          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(fpack.eo)
+                  0x0001ca          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(fpack.eo)
  __c30_signature
-                  0x0001f5          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(funpack2.eo)
+                  0x0001d0          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(funpack2.eo)
  __c30_signature
-                  0x0001fb          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(futil.eo)
+                  0x0001d6          0x6 c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\libm-elf.a(futil.eo)
 
-.text             0x0003a2        0x28a
+.text             0x0003a2        0x2fc
  .text            0x0003a2        0x200 build/default/debug/timer.o
                   0x0003a2                  _choose_prescaler
                   0x000474                  _tmr_wait_ms
                   0x000504                  _tmr_setup_period
                   0x000570                  _tmr_wait_period
- .text            0x0005a2         0x58 build/default/debug/main.o
-                  0x0005a2                  _U2ART_config
-                  0x0005ba                  _exercise_1
-                  0x0005e4                  _exercise_2
-                  0x0005ea                  _exercise_3
-                  0x0005f0                  _main
- .text            0x0005fa         0x32 build/default/debug/spi.o
-                  0x0005fa                  _spi_config
-                  0x000616                  _spi_send_char
+ .text            0x0005a2         0x80 build/default/debug/spi.o
+                  0x0005a2                  _spi_config
+                  0x0005be                  _spi_clear_row
+                  0x0005e0                  _spi_send_string
+                  0x00060c                  _spi_send_char
+ .text            0x000622         0x7c build/default/debug/main.o
+                  0x000622                  _U2ART_config
+                  0x00063a                  _exercise_1
+                  0x00065a                  _exercise_2
+                  0x000670                  _exercise_3
+                  0x000694                  _main

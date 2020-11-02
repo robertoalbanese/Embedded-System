@@ -6,7 +6,6 @@
  */
 
 #include <stdio.h>
-#include "timer.h"
 #include "spi.h"
 #include "xc.h"
 
