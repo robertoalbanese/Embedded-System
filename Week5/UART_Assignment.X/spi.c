@@ -27,6 +27,11 @@ void spi_clear_row(char row) {
     spi_send_char(row);
 }
 
+void spi_send_char(char c) {
+    while (SPI1STATbits.SPITBF == 1);
+    SPI1BUF = c;
+}
+
 void spi_send_string(char *c) {
     int i;
     while (c[i] != '\0') {
@@ -37,7 +42,9 @@ void spi_send_string(char *c) {
     }
 }
 
-void spi_send_char(char c) {
-    while (SPI1STATbits.SPITBF == 1);
-    SPI1BUF = c;
+void spi_uart_print_second_row(int count) {
+    char second_row[16];
+    spi_send_char(0xC0);
+    sprintf(second_row, "Char Recv: %d", count);
+    spi_send_string(second_row);
 }

@@ -11,7 +11,6 @@
 
 int button_E8_pressed(int *prev) {
     int currButt = 1;
-    //int p = *prev;
     int ret = 0;
 
     currButt = PORTEbits.RE8;
@@ -26,7 +25,6 @@ int button_E8_pressed(int *prev) {
 
 int button_D0_pressed(int *prev) {
     int currButt = 1;
-    //int p = *prev;
     int ret = 0;
 
     currButt = PORTDbits.RD0;

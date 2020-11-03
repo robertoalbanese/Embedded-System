@@ -8,4 +8,4 @@
 #include <xc.h> // include processor files - each processor file is guarded.  
 
 void U2ART_config();
-void spi_send_char(char c);
+void U2ART_spi_new_char_recived (int prev,int count, int  position);

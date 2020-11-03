@@ -11,3 +11,4 @@ void spi_config();
 void spi_send_char(char c);
 void spi_clear_row(char row);
 void spi_send_string(char *c);
+void spi_uart_print_second_row(int count);
