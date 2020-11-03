@@ -153,9 +153,9 @@ section                    address   length (PC units)   length (bytes) (dec)
 .const                      0x13a2                0x3c            0x5a  (90)
 .text                       0x13de               0x200           0x300  (768)
 .dinit                      0x15de                0xbc           0x11a  (282)
-.text                       0x169a               0x228           0x33c  (828)
+.text                       0x169a               0x224           0x336  (822)
 
-                 Total "program" memory used (bytes):         0x23a3  (9123) 18%
+                 Total "program" memory used (bytes):         0x239d  (9117) 18%
 
 
 "data" Memory  [Origin = 0x800, Length = 0x800]
@@ -264,14 +264,14 @@ External Symbols in Program Memory (by address):
                   0x0015ac                  _tmr_wait_period
                   0x00169a                  _spi_config
                   0x0016b6                  _spi_clear_row
-                  0x0016d8                  _spi_send_string
-                  0x001704                  _spi_send_char
+                  0x0016d8                  _spi_send_char
+                  0x0016ee                  _spi_send_string
                   0x00171a                  _spi_uart_print_second_row
                   0x001738                  _U2ART_config
                   0x001750                  _U2ART_spi_new_char_recived
-                  0x0017d0                  _main
-                  0x001856                  _button_E8_pressed
-                  0x00188c                  _button_D0_pressed
+                  0x0017cc                  _main
+                  0x001852                  _button_E8_pressed
+                  0x001888                  _button_D0_pressed
 
 External Symbols in Program Memory (by name):
 
@@ -319,19 +319,19 @@ External Symbols in Program Memory (by name):
                   0x00013c                  __psv_init
                   0x000100                  __resetPRI
                   0x0004c8                  __sprintf_cdnopuxX
-                  0x00188c                  _button_D0_pressed
-                  0x001856                  _button_E8_pressed
+                  0x001888                  _button_D0_pressed
+                  0x001852                  _button_E8_pressed
                   0x0013de                  _choose_prescaler
                   0x000864                  _efwrite
                   0x000ed8                  _fclose
                   0x000fa0                  _free
-                  0x0017d0                  _main
+                  0x0017cc                  _main
                   0x00106a                  _malloc
                   0x000686                  _memcpy
                   0x0016b6                  _spi_clear_row
                   0x00169a                  _spi_config
-                  0x001704                  _spi_send_char
-                  0x0016d8                  _spi_send_string
+                  0x0016d8                  _spi_send_char
+                  0x0016ee                  _spi_send_string
                   0x00171a                  _spi_uart_print_second_row
                   0x000694                  _strchr
                   0x001540                  _tmr_setup_period
@@ -606,13 +606,13 @@ userdata
  *(.comment)
  .comment         0x000000         0x5e c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\liblega-c-elf.a(xfiles.XX_elo)
 
-.debug_info       0x000000       0x1944
+.debug_info       0x000000       0x1952
  *(.debug_info)
  .debug_info      0x000000        0x346 build/default/debug/buttons.o
  .debug_info      0x000346        0x55a build/default/debug/main.o
  .debug_info      0x0008a0        0x518 build/default/debug/spi.o
  .debug_info      0x000db8        0x6bc build/default/debug/timer.o
- .debug_info      0x001474        0x4d0 build/default/debug/uart.o
+ .debug_info      0x001474        0x4de build/default/debug/uart.o
  *(.gnu.linkonce.wi.*)
 
 .debug_abbrev     0x000000        0x4a8
@@ -1540,18 +1540,18 @@ __c30_signature
 .dinit            0x0015de         0xbc
  .dinit           0x0015de         0xbc data_init
 
-.text             0x00169a        0x228
+.text             0x00169a        0x224
  .text            0x00169a         0x9e build/default/debug/spi.o
                   0x00169a                  _spi_config
                   0x0016b6                  _spi_clear_row
-                  0x0016d8                  _spi_send_string
-                  0x001704                  _spi_send_char
+                  0x0016d8                  _spi_send_char
+                  0x0016ee                  _spi_send_string
                   0x00171a                  _spi_uart_print_second_row
- .text            0x001738         0x98 build/default/debug/uart.o
+ .text            0x001738         0x94 build/default/debug/uart.o
                   0x001738                  _U2ART_config
                   0x001750                  _U2ART_spi_new_char_recived
- .text            0x0017d0         0x86 build/default/debug/main.o
-                  0x0017d0                  _main
- .text            0x001856         0x6c build/default/debug/buttons.o
-                  0x001856                  _button_E8_pressed
-                  0x00188c                  _button_D0_pressed
+ .text            0x0017cc         0x86 build/default/debug/main.o
+                  0x0017cc                  _main
+ .text            0x001852         0x6c build/default/debug/buttons.o
+                  0x001852                  _button_E8_pressed
+                  0x001888                  _button_D0_pressed

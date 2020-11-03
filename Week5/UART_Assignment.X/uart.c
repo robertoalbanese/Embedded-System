@@ -16,7 +16,7 @@ void U2ART_config() {
     U2STAbits.URXISEL = 1;
 }
 
-void U2ART_spi_new_char_recived (int *prev,int *count, int  position[])
+void U2ART_spi_new_char_recived (int *prev,int *count, char  position[])
 {
     while (U2STAbits.URXDA == 1) {
             if ((U2RXREG == 'r' || U2RXREG == 'n') && *prev == '\\')

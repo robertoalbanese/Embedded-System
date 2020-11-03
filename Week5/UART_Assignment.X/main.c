@@ -29,7 +29,7 @@ int main(void) {
     while (1) {
 
         if (U2STAbits.OERR == 1) {
-            U2ART_spi_new_char_recived (&prev_char,&char_count, first_row_pos);
+            U2ART_spi_new_char_recived(&prev_char, &char_count, first_row_pos);
             U2STAbits.OERR = 0;
         }
 
@@ -45,7 +45,7 @@ int main(void) {
             spi_send_string(second_row);
         }
 
-        U2ART_spi_new_char_recived (&prev_char,&char_count, first_row_pos);
+        U2ART_spi_new_char_recived(&prev_char, &char_count, first_row_pos);
     }
     return 0;
 }
