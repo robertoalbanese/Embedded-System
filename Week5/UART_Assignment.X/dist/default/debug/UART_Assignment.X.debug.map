@@ -153,9 +153,9 @@ section                    address   length (PC units)   length (bytes) (dec)
 .const                      0x13a2                0x2e            0x45  (69)
 .text                       0x13d0               0x2e0           0x450  (1104)
 .dinit                      0x16b0                0xbc           0x11a  (282)
-.text                       0x176c               0x108           0x18c  (396)
+.text                       0x176c               0x104           0x186  (390)
 
-                 Total "program" memory used (bytes):         0x232e  (9006) 18%
+                 Total "program" memory used (bytes):         0x2328  (9000) 18%
 
 
 "data" Memory  [Origin = 0x800, Length = 0x800]
@@ -268,12 +268,12 @@ External Symbols in Program Memory (by address):
                   0x0017aa                  _spi_send_string
                   0x0017d6                  _spi_send_char
                   0x0017ec                  _button_E8_pressed
-                  0x001824                  _button_D0_pressed
-                  0x00185c                  _U2ART_config
+                  0x001822                  _button_D0_pressed
+                  0x001858                  _U2ART_config
 
 External Symbols in Program Memory (by name):
 
-                  0x00185c                  _U2ART_config
+                  0x001858                  _U2ART_config
                   0x000f88                  __Atexit
                   0x000ec6                  __Closreg
                   0x00093c                  __DNKfflush
@@ -316,7 +316,7 @@ External Symbols in Program Memory (by name):
                   0x00013c                  __psv_init
                   0x000100                  __resetPRI
                   0x0004c8                  __sprintf_cdnopuxX
-                  0x001824                  _button_D0_pressed
+                  0x001822                  _button_D0_pressed
                   0x0017ec                  _button_E8_pressed
                   0x0013d0                  _choose_prescaler
                   0x000864                  _efwrite
@@ -1537,14 +1537,14 @@ __c30_signature
 .dinit            0x0016b0         0xbc
  .dinit           0x0016b0         0xbc data_init
 
-.text             0x00176c        0x108
+.text             0x00176c        0x104
  .text            0x00176c         0x80 build/default/debug/spi.o
                   0x00176c                  _spi_config
                   0x001788                  _spi_clear_row
                   0x0017aa                  _spi_send_string
                   0x0017d6                  _spi_send_char
- .text            0x0017ec         0x70 build/default/debug/buttons.o
+ .text            0x0017ec         0x6c build/default/debug/buttons.o
                   0x0017ec                  _button_E8_pressed
-                  0x001824                  _button_D0_pressed
- .text            0x00185c         0x18 build/default/debug/uart.o
-                  0x00185c                  _U2ART_config
+                  0x001822                  _button_D0_pressed
+ .text            0x001858         0x18 build/default/debug/uart.o
+                  0x001858                  _U2ART_config

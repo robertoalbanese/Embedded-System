@@ -11,24 +11,26 @@
 
 int button_E8_pressed(int *prev) {
     int currButt = 1;
+    //int p = *prev;
     int ret = 0;
 
     currButt = PORTEbits.RE8;
-    if ((*prev^currButt) == 1) {
+    if (*prev != currButt) {
         if (currButt == 0) {
             ret = 1;
         }
     }
-   *prev = currButt;
+    *prev = currButt;
     return ret;
 }
 
 int button_D0_pressed(int *prev) {
     int currButt = 1;
+    //int p = *prev;
     int ret = 0;
 
     currButt = PORTDbits.RD0;
-    if ((*prev^currButt) == 1) {
+    if (*prev != currButt) {
         if (currButt == 0) {
             ret = 1;
         }

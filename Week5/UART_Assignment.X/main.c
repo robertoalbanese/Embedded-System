@@ -54,12 +54,12 @@ int main(void) {
                 spi_send_char(first_row_pos[char_count % 16]);
                 spi_send_char(U2RXREG);
             }
-            char_count++;
+            char_count++; //We increment the counter also if we receive '\r' or '\n'
             
             if (char_count == 16)
                 spi_clear_row(0x80);
 
-            spi_send_char(0x0C);
+            spi_send_char(0xC0);
             sprintf(second_row, "Char Recv: %d", char_count);
             spi_send_string(second_row);
         }
