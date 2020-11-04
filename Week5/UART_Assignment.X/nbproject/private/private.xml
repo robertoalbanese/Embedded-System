@@ -3,9 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/B:/Program_Files/mpLab/Unige/Embedded-System/Week5/UART_Assignment.X/buttons.h</file>
             <file>file:/B:/Program_Files/mpLab/Unige/Embedded-System/Week5/UART_Assignment.X/uart.c</file>
             <file>file:/B:/Program_Files/mpLab/Unige/Embedded-System/Week5/UART_Assignment.X/main.c</file>
+            <file>file:/B:/Program_Files/mpLab/Unige/Embedded-System/Week5/UART_Assignment.X/spi.h</file>
             <file>file:/B:/Program_Files/mpLab/Unige/Embedded-System/Week5/UART_Assignment.X/buttons.c</file>
+            <file>file:/B:/Program_Files/mpLab/Unige/Embedded-System/Week5/UART_Assignment.X/uart.h</file>
+            <file>file:/B:/Program_Files/mpLab/Unige/Embedded-System/Week5/UART_Assignment.X/timer.c</file>
             <file>file:/B:/Program_Files/mpLab/Unige/Embedded-System/Week5/UART_Assignment.X/spi.c</file>
         </group>
     </open-files>
