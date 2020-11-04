@@ -7,5 +7,5 @@
 
 #include <xc.h> // include processor files - each processor file is guarded.  
 
-void U2ART_config();
-void U2ART_spi_new_char_recived (int prev,int count, int  position);
+void UART2_config(); //Routine to counfigure UART2
+void UART2_spi_new_char_recived(char *prev, int *count, const int position[]); //Routine to send the new recived character to the LCD

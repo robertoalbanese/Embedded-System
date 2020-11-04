@@ -150,9 +150,9 @@ section                    address   length (PC units)   length (bytes) (dec)
 .const                      0x13a2                0x3c            0x5a  (90)
 .text                       0x13de               0x200           0x300  (768)
 .dinit                      0x15de                0xbc           0x11a  (282)
-.text                       0x169a               0x228           0x33c  (828)
+.text                       0x169a               0x22c           0x342  (834)
 
-                 Total "program" memory used (bytes):         0x23a3  (9123) 18%
+                 Total "program" memory used (bytes):         0x23a9  (9129) 18%
 
 
 "data" Memory  [Origin = 0x800, Length = 0x800]
@@ -248,8 +248,8 @@ External Symbols in Program Memory (by address):
                   0x00116c                  ___udivsi3
                   0x00118c                  ___umodsi3
                   0x001192                  ___mulp32peds3
-                  0x001192                  ___mulp32eds3
                   0x001192                  ___mulsi3
+                  0x001192                  ___mulp32eds3
                   0x0011ea                  ___udivmoddi3
                   0x0012d0                  ___udivdi3
                   0x0012de                  ___umoddi3
@@ -260,20 +260,20 @@ External Symbols in Program Memory (by address):
                   0x001540                  _tmr_setup_period
                   0x0015ac                  _tmr_wait_period
                   0x00169a                  _spi_config
-                  0x0016b6                  _spi_clear_row
-                  0x0016d8                  _spi_send_string
-                  0x001704                  _spi_send_char
-                  0x00171a                  _spi_uart_print_second_row
-                  0x001738                  _U2ART_config
-                  0x001750                  _U2ART_spi_new_char_recived
-                  0x0017d0                  _main
-                  0x001856                  _button_E8_pressed
-                  0x00188c                  _button_D0_pressed
+                  0x0016b6                  _spi_send_char
+                  0x0016cc                  _spi_clear_row
+                  0x0016ee                  _spi_send_string
+                  0x001716                  _spi_uart_print_second_row
+                  0x001734                  _UART2_config
+                  0x00174c                  _UART2_spi_new_char_recived
+                  0x0017cc                  _main
+                  0x00185a                  _button_E8_pressed
+                  0x001890                  _button_D0_pressed
 
 External Symbols in Program Memory (by name):
 
-                  0x001738                  _U2ART_config
-                  0x001750                  _U2ART_spi_new_char_recived
+                  0x001734                  _UART2_config
+                  0x00174c                  _UART2_spi_new_char_recived
                   0x000f88                  __Atexit
                   0x000ec6                  __Closreg
                   0x00093c                  __DNKfflush
@@ -316,20 +316,20 @@ External Symbols in Program Memory (by name):
                   0x00013c                  __psv_init
                   0x000100                  __resetPRI
                   0x0004c8                  __sprintf_cdnopuxX
-                  0x00188c                  _button_D0_pressed
-                  0x001856                  _button_E8_pressed
+                  0x001890                  _button_D0_pressed
+                  0x00185a                  _button_E8_pressed
                   0x0013de                  _choose_prescaler
                   0x000864                  _efwrite
                   0x000ed8                  _fclose
                   0x000fa0                  _free
-                  0x0017d0                  _main
+                  0x0017cc                  _main
                   0x00106a                  _malloc
                   0x000686                  _memcpy
-                  0x0016b6                  _spi_clear_row
+                  0x0016cc                  _spi_clear_row
                   0x00169a                  _spi_config
-                  0x001704                  _spi_send_char
-                  0x0016d8                  _spi_send_string
-                  0x00171a                  _spi_uart_print_second_row
+                  0x0016b6                  _spi_send_char
+                  0x0016ee                  _spi_send_string
+                  0x001716                  _spi_uart_print_second_row
                   0x000694                  _strchr
                   0x001540                  _tmr_setup_period
                   0x0014b0                  _tmr_wait_ms
@@ -600,30 +600,30 @@ userdata
  *(.comment)
  .comment         0x000000         0x5e c:/program files/microchip/xc16/v1.60/bin/bin/../../lib\liblega-c-elf.a(xfiles.XX_elo)
 
-.debug_info       0x000000       0x1945
+.debug_info       0x000000       0x195d
  *(.debug_info)
  .debug_info      0x000000        0x346 build/default/production/buttons.o
  .debug_info      0x000346        0x55a build/default/production/main.o
- .debug_info      0x0008a0        0x519 build/default/production/spi.o
- .debug_info      0x000db9        0x6bc build/default/production/timer.o
- .debug_info      0x001475        0x4d0 build/default/production/uart.o
+ .debug_info      0x0008a0        0x518 build/default/production/spi.o
+ .debug_info      0x000db8        0x6bc build/default/production/timer.o
+ .debug_info      0x001474        0x4e9 build/default/production/uart.o
  *(.gnu.linkonce.wi.*)
 
-.debug_abbrev     0x000000        0x4a8
+.debug_abbrev     0x000000        0x4af
  *(.debug_abbrev)
  .debug_abbrev    0x000000         0xc4 build/default/production/buttons.o
  .debug_abbrev    0x0000c4         0xf1 build/default/production/main.o
  .debug_abbrev    0x0001b5        0x113 build/default/production/spi.o
  .debug_abbrev    0x0002c8         0xee build/default/production/timer.o
- .debug_abbrev    0x0003b6         0xf2 build/default/production/uart.o
+ .debug_abbrev    0x0003b6         0xf9 build/default/production/uart.o
 
-.debug_line       0x000000        0x5b8
+.debug_line       0x000000        0x5b7
  *(.debug_line)
  .debug_line      0x000000        0x117 build/default/production/buttons.o
  .debug_line      0x000117        0x118 build/default/production/main.o
- .debug_line      0x00022f        0x120 build/default/production/spi.o
- .debug_line      0x00034f        0x150 build/default/production/timer.o
- .debug_line      0x00049f        0x119 build/default/production/uart.o
+ .debug_line      0x00022f        0x11f build/default/production/spi.o
+ .debug_line      0x00034e        0x150 build/default/production/timer.o
+ .debug_line      0x00049e        0x119 build/default/production/uart.o
 
 .debug_frame      0x000000        0x1f8
  *(.debug_frame)
@@ -1534,18 +1534,18 @@ __c30_signature
 .dinit            0x0015de         0xbc
  .dinit           0x0015de         0xbc data_init
 
-.text             0x00169a        0x228
- .text            0x00169a         0x9e build/default/production/spi.o
+.text             0x00169a        0x22c
+ .text            0x00169a         0x9a build/default/production/spi.o
                   0x00169a                  _spi_config
-                  0x0016b6                  _spi_clear_row
-                  0x0016d8                  _spi_send_string
-                  0x001704                  _spi_send_char
-                  0x00171a                  _spi_uart_print_second_row
- .text            0x001738         0x98 build/default/production/uart.o
-                  0x001738                  _U2ART_config
-                  0x001750                  _U2ART_spi_new_char_recived
- .text            0x0017d0         0x86 build/default/production/main.o
-                  0x0017d0                  _main
- .text            0x001856         0x6c build/default/production/buttons.o
-                  0x001856                  _button_E8_pressed
-                  0x00188c                  _button_D0_pressed
+                  0x0016b6                  _spi_send_char
+                  0x0016cc                  _spi_clear_row
+                  0x0016ee                  _spi_send_string
+                  0x001716                  _spi_uart_print_second_row
+ .text            0x001734         0x98 build/default/production/uart.o
+                  0x001734                  _UART2_config
+                  0x00174c                  _UART2_spi_new_char_recived
+ .text            0x0017cc         0x8e build/default/production/main.o
+                  0x0017cc                  _main
+ .text            0x00185a         0x6c build/default/production/buttons.o
+                  0x00185a                  _button_E8_pressed
+                  0x001890                  _button_D0_pressed
