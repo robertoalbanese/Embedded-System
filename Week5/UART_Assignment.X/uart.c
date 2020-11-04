@@ -1,6 +1,6 @@
 /*
  * File:   main.c
- * Author: ralba
+ * Author: Roberto Albanese - Andrea Tiranti
  *
  * Created on October 30, 2020, 4:32 PM
  */

@@ -33,9 +33,10 @@ int main(void) {
             U2STAbits.OERR = 0;
         }
 
-        if (button_E8_pressed(&prev_butt_E8) == 1)
+        if (button_E8_pressed(&prev_butt_E8) == 1) {
             while (U2STAbits.UTXBF == 1);
-        U2TXREG = char_count;
+            U2TXREG = char_count;
+        }
 
         if (button_D0_pressed(&prev_butt_D0) == 1) {
             spi_clear_row(0x80);
