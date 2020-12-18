@@ -1,7 +1,6 @@
-
 /* 
  * File:   timer.h
- * Author:  ralba
+ * Author:  ralba & andre
  * Comments:
  * Revision history: 
  */
@@ -20,8 +19,4 @@ void tmr_wait_ms(int timer,int ms);
 void tmr_setup_period(int timer , int ms);
 void tmr_wait_period(int timer);
 
-#endif /* __cplusplus */
-
-// TODO If C++ is being used, regular C code needs function names to have C 
-// linkage so the functions can be used by the c code. 
-
+#endif

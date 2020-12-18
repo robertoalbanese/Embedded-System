@@ -1,6 +1,6 @@
 /* 
  * File:   spi.h
- * Author:  Andrea Tiranti
+ * Author:  andre & ralba
  * Comments:
  * Revision history: 
  */
