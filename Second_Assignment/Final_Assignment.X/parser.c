@@ -31,7 +31,7 @@ int parse_byte(parser_state* ps, char byte) {
                 ps->state = STATE_DOLLAR; // get ready for a new message
                 ps->msg_payload[ps->index_payload] = '\0';
                 return NEW_MESSAGE;
-            } else if (ps->index_payload == 100) { // error
+            } else if (ps->index_payload == 5) { // error
                 ps->state = STATE_DOLLAR;
                 ps->index_payload = 0;
             } else {

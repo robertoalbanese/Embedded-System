@@ -63,7 +63,7 @@ typedef struct {
     int velocity;
 } velocity_data;
 
-//conficuration struct of tasks
+//Conficuration struct of tasks
 
 typedef struct {
     void (*task)(void*);
@@ -93,8 +93,11 @@ void* task_uart_reciver(void* params) {
     while (U1STAbits.URXDA == 1 && tmp == NO_MESSAGE)
         tmp = parse_byte(new_data->parser, U1RXREG);
     //Store the data of the velocity (rpm) only if a MCREF message with a non empty payload has been recived.
-    if (tmp == NEW_MESSAGE && strcmp(new_data->parser->msg_type, "MCREF") == 0 && strlen(new_data->parser->msg_payload) > 0)
+    if (tmp == NEW_MESSAGE && strcmp(new_data->parser->msg_type, "MCREF") == 0 && strlen(new_data->parser->msg_payload) > 0){
         new_data->velocity = atoi(new_data->parser->msg_payload);
+        if (new_data->velocity > 1000)
+            new_data->velocity = 1000; // Saturation if greater then 1000 rpm
+    }
     return NULL;
 }
 
@@ -134,7 +137,7 @@ void* task_get_sensor_data(void* params) {
     return NULL;
 }
 
-// This task will blink the led D3 to let the user the correct execution of the program
+// This task will blink the led D3 at 1Hz to let the user see the correct execution of the program
 
 void* task_led_blinkD3() {
     LATBbits.LATB0 = !LATBbits.LATB0;
@@ -145,7 +148,7 @@ void* task_led_blinkD3() {
 
 void* task_led_blinkD4(void* params) {
     sensor_data* sensors = (sensor_data*) params;
-    if (sensors->current >= 15)
+    if (sensors->current > 15)
         LATBbits.LATB1 = 1;
     else
         LATBbits.LATB1 = 0;
@@ -214,8 +217,8 @@ int main(void) {
     schedInfo[0].N = 1; //5 ms
     schedInfo[1].N = 200; //1000 ms
     schedInfo[2].N = 10; //50 ms
-    schedInfo[3].N = 40; //200 ms (oppure 300 ms (60))
-    schedInfo[4].N = 200; //1000 ms
+    schedInfo[3].N = 40; //200 ms
+    schedInfo[4].N = 100; //500 ms
     schedInfo[5].N = 20; //100 ms
 
     //Control loop
