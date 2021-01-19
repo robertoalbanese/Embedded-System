@@ -6,7 +6,9 @@
  */
 
 #include "xc.h"
+#include "uart.h"
 #include "config.h"
+#include <string.h>
 
 void UART_config() {
     U2BRG = 11; // ((1843200) / (16 * 9600)) - 1
@@ -20,31 +22,31 @@ void UART_config() {
 void __attribute__((__interrupt__, __auto_psv__)) _U2RXInterrupt() {
     IFS1bits.U2RXIF = 0; // Reset rx interrupt flag
     int val = U2RXREG; // Read from rx register
-    writeOnBuffer(&reciverBuffer, val); // Save value in buffer
+    UART_writeOnBuffer(&reciverBuffer, val); // Save value in buffer
 }
 
-void UART_bufferInit(UARTBuffer *buffer) {
+void UART_bufferInit(uart_buffer *buffer) {
     buffer->buffer = 0;
     buffer->headIndex = 0; //wrinting index
     buffer->tailIndex = 0; //reading index
     buffer->unreadData = 0;
 }
 
-int UART_buffDim(UARTBuffer *buffer) {
+int UART_buffDim(uart_buffer *buffer) {
     if (buffer->headIndex >= buffer->tailIndex)
         return (buffer->headIndex - buffer->tailIndex);
     else
         return (TXDIM - (buffer->tailIndex - buffer->headIndex));
 }
 
-void UART_writeOnBuffer(UARTBuffer *buffer, int val) {
+void UART_writeOnBuffer(uart_buffer *buffer, int val) {
     buffer->buffer[buffer->headIndex] = val;
     buffer->headIndex++;
     if (buffer->headIndex == TXDIM)
         buffer->headIndex = 0;
 }
 
-char UART_readOnBuffer(UARTBuffer *buffer) {
+char UART_readOnBuffer(uart_buffer *buffer) {
     char readChar;
     IEC1bits.U2RXIE = 0; // Disable interrupt of UART
     if (buffer->tailIndex == buffer->headIndex) { // We've finished reading

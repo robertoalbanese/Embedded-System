@@ -19,6 +19,19 @@ void pwm_config() {
     PTCONbits.PTEN = 1; //Enable PWM
 }
 
+int sendPWM(int* rpm1,int* rpm2)
+{
+    // Define the duty cycle
+    velocity->dutyCycle1 = (*rpm1 - MIN_DC) / (MAX_DC - MIN_DC);
+    velocity->dutyCycle2 = (*rpm2 - MIN_DC) / (MAX_DC - MIN_DC);
+    
+    // Assign it to the corresponding output pins
+    PDC2 = velocity->dutyCycle1 * 2.0 * PTPER;
+    PDC3 = velocity->dutyCycle2 * 2.0 * PTPER;
+    
+    return 0;
+}
+
 int satRPM(int rpm) {
     
     if(rpm > velocity.maxRPM) {

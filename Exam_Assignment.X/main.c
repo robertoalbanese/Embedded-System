@@ -38,55 +38,13 @@
 #include "uart.h"
 #include "pwm.h"
 #include "adc.h"
+#include "buttons.h"
 #include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
 
-typedef struct {
-    int buffer[TXDIM];
-    int headIndex;
-    int tailIndex;
-    int unreadData;
-} UARTBuffer;
-
-UARTBuffer reciverBuffer;
-
-typedef struct {
-    double average[10]; //FIFO buffer
-    double temperature;
-} temperature_info;
-
-// Defines a struct in which it is possible to store and read current and temperature values
-
-
-
-// Stores rpm values to control DC motors
-
-typedef struct {
-    int rpm1;
-    int rpm2;
-    int maxRPM;
-    int minRPM;
-} rpm_data;
-
-rpm_data velocity;
-//Configuration struct of tasks
-
-typedef struct {
-    void (*task)(void*);
-    void *params;
-    int n;
-    int N;
-} heartbeat;
-
-heartbeat schedInfo[MAX_TASKS];
-
-// Parser state variable
-parser_state pstate;
-
-int state;
 //This task receives an rpm value and uses it to generate a pwm signal
 
 void* task_pwm_control_motor(void* params) {
@@ -94,22 +52,17 @@ void* task_pwm_control_motor(void* params) {
 
     int rpm1 = data->rpm1;
     int rpm2 = data->rpm2;
+    //Generate and send PWM signals
+    sendPWM(&rpm1, &rpm2);
 
-    // Define the duty cycle
-    int dutyCycle1 = (rpm1 - MIN_DC) / (MAX_DC - MIN_DC);
-    int dutyCycle2 = (rpm2 - MIN_DC) / (MAX_DC - MIN_DC);
-    // Assign it to the corresponding output pins
-    PDC2 = dutyCycle1 * 2.0 * PTPER;
-    PDC3 = dutyCycle2 * 2.0 * PTPER;
-
-    return 0;
+    return NULL;
 }
 
 void* task_uart_reciver(void* params) {
-
-    UARTBuffer* newBuffer = (UARTBuffer*) params;
-    char temp;
+    uart_buffer* newBuffer = (uart_buffer*) params;
+    char temp; //Received character
     int parser;
+    char ack[50];
 
     while (UART_buffDim(&newBuffer) > 0) {
         temp = UART_readOnBuffer(&newBuffer);
@@ -119,45 +72,58 @@ void* task_uart_reciver(void* params) {
             int tempRPM1, tempRPM2;
             // Message Decoding Routine
             if (strcmp(pstate->msg_type, "HLREF") == 0) {
-                sscanf(pstate->msg_payload, "%d,%d", &tempRPM1, &tempRPM2);
-                // Saturate RPM if they're above the allowed threshold
-                tempRPM1 = satRPM(tempRPM1);
-                tempRPM2 = satRPM(tempRPM2);
+                if (state == STATE_SAFE) {
+                } else {
+                    if (state == STATE_TIMEOUT) {
+                        state = STATE_COMMAND;
+                        //reset timer 2 and interrupt
+                        TMR2 = 0; //reset the timer
+                        IEC0bits.T2IE = 1; // Enable interrupt of timer t2
+                        T2CONbits.TON = 1; //starts the timer
+                    }
+                    sscanf(pstate->msg_payload, "%d,%d", &tempRPM1, &tempRPM2);
+                    // Saturate RPM if they're above the allowed threshold
+                    tempRPM1 = satRPM(tempRPM1);
+                    tempRPM2 = satRPM(tempRPM2);
 
-                velocity->rpm1 = tempRPM1;
-                velocity->rpm2 = tempRPM2;
-
+                    velocity->rpm1 = tempRPM1;
+                    velocity->rpm2 = tempRPM2;
+                }
             } else if (strcmp(pstate->msg_type, "HLSAT") == 0) {
                 int tempMax, tempMin;
                 sscanf(pstate->msg_payload, "%d,%d", &tempMax, &tempMin);
                 if (tempMax < MAX_RPM && tempMax > 0 && tempMin > MIN_RPM && tempMin < 0 && tempMin < tempMax) {
                     velocity.maxRPM = tempMax;
                     velocity.minRPM = tempMin;
+                    //return positive feedback
+                    ack={"$MCACK,SAT,1*"};
+                    UART_sendMsg(ack);
                 } else {
-                    //return negative act error
+                    //return negative feedback
+                    ack={"$MCACK,SAT,0*"};
+                    UART_sendMsg(ack);
                 }
             } else if (strcmp(pstate->msg_type, "HLENA") == 0) {
-                //if self mode, than return to command mode
+                if (state == STATE_SAFE) {
+                    state = STATE_COMMAND;
+                    //reset timer 2 and interrupt
+                    TMR2 = 0; //reset the timer
+                    IEC0bits.T2IE = 1; // Enable interrupt of timer t2
+                    T2CONbits.TON = 1; //starts the timer
+                    //return positive feedback
+                    ack={"$MCACK,ENA,1*"};
+                    UART_sendMsg(ack);
+                    
+                } else {
+                    //do nothing or
+                    //return positive feedback
+                    /*ack={"$MCACK,ENA,0*"};
+                    UART_sendMsg(ack);*/
+                }
             }
         }
     }
-    
     return NULL;
-    /*velocity_data* new_data = (velocity_data*) params;
-    int tmp = NO_MESSAGE;
-    //Check if an overflow in the receive buffer is occurred
-    if (U1STAbits.OERR == 1)
-        U1STAbits.OERR = 0; //Reset overflow flag
-
-    while (U1STAbits.URXDA == 1)
-        tmp = parse_byte(new_data->parser, U1RXREG);
-    //Store the data of the velocity (rpm) only if a MCREF message with a non empty payload has been recived.
-    if (tmp == NEW_MESSAGE && strcmp(new_data->parser->msg_type, "MCREF") == 0 && strlen(new_data->parser->msg_payload) > 0){
-        new_data->velocity = atoi(new_data->parser->msg_payload);
-        if (new_data->velocity > 1000)
-            new_data->velocity = 1000; // Saturation if greater then 1000 rpm
-    }
-        return NULL;*/
 }
 
 void* task_acquire_temperature(void* params) {
@@ -192,7 +158,7 @@ void* task_average_temperature(void* params) {
     //Send average routine
     sprintf(msg, "$MCFBK,2.1f*", average);
     UART_sendMsg(msg);
-    
+
     return NULL;
 }
 
@@ -206,7 +172,27 @@ void* task_led_blink(void* params) {
 }
 
 void* task_print_lcd(void* params) {
+    display.format[display.index];
     return NULL;
+}
+
+void* task_send_feedback(void* params) {
+    char feedback[50];
+    sprintf(feedback, "$MCFBK,%d,%d,%d*", velocity.rpm1, velocity.rpm2,state);
+    UART_sendMsg(feedback);
+    return NULL;
+}
+//Scheduler of the program.
+
+void scheduler() {
+    int i;
+    for (i = 0; i < MAX_TASKS; i++) {
+        schedInfo[i].n++;
+        if (schedInfo[i].n >= schedInfo[i].N) {
+            schedInfo[i].task(schedInfo[i].params);
+            schedInfo[i].n = 0;
+        }
+    }
 }
 
 int main(void) {
@@ -215,6 +201,7 @@ int main(void) {
     pwm_config();
     UART_config();
     UART_bufferInit(&reciverBuffer);
+    buttons_config();
     // LED config
     TRISBbits.TRISB0 = 0;
     TRISBbits.TRISB1 = 0;
@@ -222,17 +209,14 @@ int main(void) {
     velocity.maxRPM = MAX_RPM;
     velocity.minRPM = MIN_RPM;
     //Temperature
-    temperature_info temperature;
     temperature.temperature = 0;
+    //Display lcd structure
+    display.index = 0;
+    display.format[0] = &displayCaseA;
+    display.format[1] = &displayCaseB;
 
+    //System starts in COMMAND state
     state = STATE_COMMAND;
-
-    // velocity_data struct initialization
-    /*velocity_data velocity_msg;
-    velocity_msg.parser->state = STATE_DOLLAR;
-    velocity_msg.parser->index_type = 0;
-    velocity_msg.parser->index_payload = 0;
-    velocity_msg.velocity = 0;*/
 
     // Assignment of task function
     schedInfo[0].task = &task_pwm_control_motor;
@@ -241,6 +225,7 @@ int main(void) {
     schedInfo[3].task = &task_average_temperature;
     schedInfo[4].task = &task_led_blink;
     schedInfo[5].task = &task_print_lcd;
+    schedInfo[6].task = &task_send_feedback;
 
     // Assignment of input parameters for each task
     schedInfo[0].params = &velocity;
@@ -249,14 +234,16 @@ int main(void) {
     schedInfo[3].params = &temperature;
     schedInfo[4].params = &temperature;
     schedInfo[5].params = NULL;
+    schedInfo[6].params = NULL;
 
-    // Inizialization of counters
+    // Initialization of counters
     schedInfo[0].n = 0;
     schedInfo[1].n = 0;
     schedInfo[2].n = 0;
     schedInfo[3].n = 0;
     schedInfo[4].n = 0;
     schedInfo[5].n = 0;
+    schedInfo[6].n = 0;
 
     // Initialization of execution time for each task (t=N*5ms)
     schedInfo[0].N = 1; //5 ms
@@ -265,6 +252,12 @@ int main(void) {
     schedInfo[3].N = 10; //50 ms
     schedInfo[4].N = 40; //200 ms
     schedInfo[5].N = 100; //500 ms
+    schedInfo[6].N = 100; //500 ms
+
+    //Timer 1 config (control loop at 10Hz)
+    tmr_setup_period(TIMER1, 100);
+    //Timer 2 config (Timeout mode timer)
+    tmr_setup_period(TIMER2, 5000);
 
     //Control loop
     while (1) {

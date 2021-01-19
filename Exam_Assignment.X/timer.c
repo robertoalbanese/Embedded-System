@@ -7,8 +7,7 @@
 
 #include "xc.h"
 #include "timer.h"
-
-void choose_prescaler(int ms, int* pr, int* tckps);
+#include "config.h"
 
 void choose_prescaler(int ms, int* pr, int* tckps) {
     long ticks = 1843.2 * ms;
@@ -93,15 +92,25 @@ void tmr_setup_period(int timer, int ms) {
         TMR1 = 0; //reset the timer counter
         choose_prescaler(ms, &pr, &tckps);
         PR1 = pr;
-        T1CONbits.TCKPS = tckps; //prescaler 1:64
+        T1CONbits.TCKPS = tckps; //prescaler
         T1CONbits.TON = 1; //starts the timer
     } else if (timer == TIMER2) {
         T2CONbits.TON = 0;
         TMR2 = 0; //reset the timer counter
         choose_prescaler(ms, &pr, &tckps);
         PR2 = pr;
-        T2CONbits.TCKPS = tckps; //prescaler 1:64
+        T2CONbits.TCKPS = tckps; //prescaler
         T2CONbits.TON = 1; //starts the timer
+        IEC0bits.T2IE = 1; // Enable interrupt of timer t2
+    }
+    else if (timer == TIMER3) {
+        T3CONbits.TON = 0;
+        TMR3 = 0; //reset the timer counter
+        choose_prescaler(ms, &pr, &tckps);
+        PR3 = pr;
+        T3CONbits.TCKPS = tckps; //prescaler
+        T3CONbits.TON = 1; //starts the timer
+        IEC0bits.T3IE = 1; // Enable interrupt of timer t3
     }
 }
 
@@ -120,4 +129,20 @@ void tmr_wait_period(int timer) {
             break;
         }
     }
+}
+
+// Timer 2 ISR - Set motor velocity to zeros and blink led D4
+void __attribute__((__interrupt__, __auto_psv__)) _T2Interrupt () {
+    IEC0bits.T2IE = 0;         // Disable interrupt of timer t2
+    // Set timeout state
+    state = STATE_TIMEOUT;
+    // Set motor velocity to zero
+    velocity.rpm1 = 0;
+    velocity.rpm2 = 0;
+    // Set duty cycle to zero
+    sendPWM(&velocity.rpm1, &velocity.rpm2);
+    
+    IFS0bits.T2IF = 0;          // Reset interrupt flag for timer 2
+    T2CONbits.TON = 0;          // Stop the timer
+    TMR2 = 0;                   // Reset the timer 
 }
