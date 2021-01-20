@@ -62,7 +62,6 @@ typedef struct {
 
 //Tasks info structure
 heartbeat schedInfo[MAX_TASKS];
-
 //Timeout flag
 int timeout_flag;
 //Circular rx buffer for UART data
@@ -80,14 +79,14 @@ char state_info[] = {'C', 'T', 'H'};
 
 void* task_pwm_control_motor(void* params) {
     rpm_data* data = (rpm_data*) params;
-    //If button s5 has been pressed, then stop the motors
+    //If button s5 has been pressed we store the value 0 in the struc
 
     if (s5_flag == 1) {
         s5_flag = 0;
         data->rpm1 = 0;
         data->rpm2 = 0;
     }
-    //5 secs have passed from the last reference signal, then stop the motors
+    //After 5 secs with no reference signals we store the value in the struc
     if (timeout_flag == 1) {
         timeout_flag = 0;
         data->rpm1 = 0;
@@ -115,19 +114,22 @@ void* task_uart_reciver(void* params) {
                 } else {
                     if (state == STATE_TIMEOUT) {
                         state = STATE_COMMAND;
-                        //reset timer 2 and interrupt
-                        TMR2 = 0; //reset the timer
-                        IEC0bits.T2IE = 1; // Enable interrupt of timer t2
-                        T2CONbits.TON = 1; //starts the timer
                     }
                     sscanf(info->pstate->msg_payload, "%d,%d", &info->rpm->rpm1, &info->rpm->rpm2);
                     // Saturate RPM if they're above the allowed threshold
                     satRPM(info->rpm);
+                    //reset timer 2 and interrupt
+                    T2CONbits.TON = 0; //starts the timer
+                    TMR2 = 0; //reset the timer
+                    IEC0bits.T2IE = 1; // Enable interrupt of timer t2
+                    IFS0bits.T2IF = 0; // Set the timer flag to zero to be notified of a new event
+                    T2CONbits.TON = 1; //starts the timer
                 }
             } else if (strcmp(info->pstate->msg_type, "HLSAT") == 0) {
                 int tempMax, tempMin;
-                sscanf(info->pstate->msg_payload, "%d,%d", &tempMax, &tempMin);
-                if (tempMax < MAX_RPM && tempMax > 0 && tempMin > MIN_RPM && tempMin < 0 && tempMin < tempMax) {
+                sscanf(info->pstate->msg_payload, "%d,%d", &tempMin, &tempMax);
+                if (tempMax < MAX_RPM && tempMax >= 0 && tempMin > MIN_RPM && tempMin <= 0) {
+                    //Update rpm boundaries
                     info->rpm->maxRPM = tempMax;
                     info->rpm->minRPM = tempMin;
                     //return positive feedback
@@ -144,6 +146,7 @@ void* task_uart_reciver(void* params) {
                     //reset timer 2 and interrupt
                     TMR2 = 0; //reset the timer
                     IEC0bits.T2IE = 1; // Enable interrupt of timer t2
+                    IFS0bits.T2IF = 0; // Set the timer flag to zero to be notified of a new event
                     T2CONbits.TON = 1; //starts the timer
                     //return positive feedback
                     char ack[50] = "$MCACK,ENA,1*";
@@ -203,6 +206,8 @@ void* task_led_blink(void* params) {
     //Blink D4 if in timeout state
     if (state == STATE_TIMEOUT)
         LATBbits.LATB1 = !LATBbits.LATB1;
+    else
+        LATBbits.LATB1 = 0;
     return NULL;
 }
 
@@ -294,7 +299,7 @@ int main(void) {
 
     //System starts in COMMAND state
     state = STATE_COMMAND;
-    
+
     // Assignment of task function
     schedInfo[0].task = &task_pwm_control_motor;
     schedInfo[1].task = &task_uart_reciver;
@@ -322,17 +327,17 @@ int main(void) {
     schedInfo[5].n = 0;
     schedInfo[6].n = 0;
 
-    // Initialization of execution time for each task (t=N*5ms)
-    schedInfo[0].N = 1; //5 ms
-    schedInfo[1].N = 200; //1000 ms
-    schedInfo[2].N = 10; //50 ms
-    schedInfo[3].N = 10; //50 ms
-    schedInfo[4].N = 40; //200 ms
+    // Initialization of execution time for each task (t=N*1ms)
+    schedInfo[0].N = 1; //1 ms / 1kHz
+    schedInfo[1].N = 100; //100 ms / 10Hz
+    schedInfo[2].N = 100; //100 ms / 10Hz
+    schedInfo[3].N = 1000; //1000 ms /1Hz
+    schedInfo[4].N = 500; //500 ms / 1 Hz
     schedInfo[5].N = 100; //500 ms
-    schedInfo[6].N = 100; //500 ms
+    schedInfo[6].N = 200; //200 ms / 5Hz
 
-    //Timer 1 config (control loop at 10Hz)
-    tmr_setup_period(TIMER1, 100);
+    //Timer 1 config (control loop at 1kHz)
+    tmr_setup_period(TIMER1, 1);
     //Timer 2 config (Timeout mode timer)
     tmr_setup_period(TIMER2, 5000);
 

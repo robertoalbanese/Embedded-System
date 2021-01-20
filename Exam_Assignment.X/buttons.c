@@ -31,8 +31,12 @@ void __attribute__((__interrupt__, __auto_psv__)) _INT0Interrupt() {
     s5_flag = 1;
     //Change system state to SAFE
     state = STATE_SAFE;
+    
+    // Stop asyncronously the motors
+    PDC2 = 0.5 * 2.0 * PTPER;
+    PDC3 = 0.5 * 2.0 * PTPER;
+    
     // Stop timeout mode timer
-    TMR2 = 0;
     T2CONbits.TON = 0;
     IEC0bits.T2IE = 0; // Disable interrupt for timeout mode
     IFS0bits.T2IF = 0; // Set the flag = 0
