@@ -7,7 +7,6 @@
 
 #include "xc.h"
 #include "uart.h"
-#include "config.h"
 #include <string.h>
 
 void UART_config() {
@@ -22,11 +21,10 @@ void UART_config() {
 void __attribute__((__interrupt__, __auto_psv__)) _U2RXInterrupt() {
     IFS1bits.U2RXIF = 0; // Reset rx interrupt flag
     int val = U2RXREG; // Read from rx register
-    UART_writeOnBuffer(&reciverBuffer, val); // Save value in buffer
+    UART_writeOnBuffer(&buffer, val); // Save value in buffer
 }
 
 void UART_bufferInit(uart_buffer *buffer) {
-    buffer->buffer = 0;
     buffer->headIndex = 0; //wrinting index
     buffer->tailIndex = 0; //reading index
     buffer->unreadData = 0;
@@ -65,9 +63,11 @@ char UART_readOnBuffer(uart_buffer *buffer) {
 
 int UART_sendMsg(char* message) {
     char msg[50];
+    int i;
     strcpy(msg, message);
-    for (int i = 0; i < strlen(msg); i++) {
+    for (i = 0; i < strlen(msg); i++) {
         while (U1STAbits.UTXBF == 1);
         U1TXREG = msg[i];
     }
+    return 0;
 }

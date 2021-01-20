@@ -5,10 +5,9 @@
  * Created on October 24, 2020, 4:03 PM
  */
 
-#include <stdio.h>
-#include "spi.h"
-#include "config.h"
 #include "xc.h"
+#include "spi.h"
+#include <stdio.h>
 
 //SPI configuration routine
 
@@ -67,30 +66,30 @@ void spi_send_string(char *s, char row) {
     }
 }
 
-void* displayCaseA() {
+void* displayCaseA(display_info* info) {
     char first_row[16];
     char second_row[16];
 
     spi_clear_lcd();
     //Temperature Display
-    sprintf(first_row, "ST:%c;T:%2.1f", state_info[state], temperature->average);
+    sprintf(first_row, "ST:%c;T:%2.1f", state_info[state], info->temp_info->average);
     spi_send_string(first_row, 0x80);
     //RPM Display: CHECK IF 2ND ROW VERY IMPORTANT
-    sprintf(second_row, "R:%d,%d", velocity->rpm1, velocity->rpm2);
+    sprintf(second_row, "R:%d,%d", info->rpm_info->rpm1, info->rpm_info->rpm2);
     spi_send_string(second_row, 0xC0);
     return NULL;
 }
 
-void* displayCaseB() {
+void* displayCaseB(display_info* info) {
     char first_row[16];
     char second_row[16];
 
     spi_clear_lcd();
     //Temperature Display
-    sprintf(first_row, "SA:%d,%d", velocity->minRPM, velocity->maxRPM);
+    sprintf(first_row, "SA:%d,%d", info->rpm_info->minRPM, info->rpm_info->maxRPM);
     spi_send_string(first_row, 0x80);
     //RPM Display: CHECK IF 2ND ROW VERY IMPORTANT
-    sprintf(second_row, "R:%d,%d", velocity->dutyCycle1, velocity->dutyCycle2);
+    sprintf(second_row, "R:%1.2f,%1.2f", info->rpm_info->dutyCycle1, info->rpm_info->dutyCycle2);
     spi_send_string(second_row, 0xC0);
     return NULL;
 }
