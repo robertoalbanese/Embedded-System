@@ -32,7 +32,6 @@
 #pragma config ICS = ICS_PGD            // Comm Channel Select (Use PGC/EMUC and PGD/EMUD)
 
 #include "xc.h"
-#include "config.h"
 #include "timer.h"
 #include "spi.h"
 #include "parser.h"
@@ -40,13 +39,42 @@
 #include "pwm.h"
 #include "adc.h"
 #include "buttons.h"
+#include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
 
+typedef struct {
+    void (*task)(void*);
+    void *params;
+    int n;
+    int N;
+} heartbeat;
+
+typedef struct {
+    uart_buffer* buffer;
+    parser_state* pstate;
+    rpm_data* rpm;
+    temperature_info* temperature;
+    display_lcd* display;
+} program_info;
+
 //Tasks info structure
 heartbeat schedInfo[MAX_TASKS];
+
+//Timeout flag
+int timeout_flag;
+//Circular rx buffer for UART data
+uart_buffer buffer;
+//S5 button pressed flag
+int s5_flag;
+//S6 button pressed flag
+int s6_flag;
+//State of the program
+int state;
+//State enumeration
+char state_info[] = {'C', 'T', 'H'};
 
 //This task receives an rpm value and uses it to generate a pwm signal
 
@@ -136,7 +164,7 @@ void* task_uart_reciver(void* params) {
 void* task_acquire_temperature(void* params) {
     temperature_info* temp_info = (temperature_info*) params;
 
-    while (ADCON1bits.DONE == 0); //wait until  the conversion done
+    while (ADCON1bits.DONE == 0); //wait until  the conversion is done
     ADCON1bits.DONE = 0;
     int i;
     // Temperature data
@@ -266,7 +294,7 @@ int main(void) {
 
     //System starts in COMMAND state
     state = STATE_COMMAND;
-
+    
     // Assignment of task function
     schedInfo[0].task = &task_pwm_control_motor;
     schedInfo[1].task = &task_uart_reciver;

@@ -9,6 +9,10 @@
 #include "xc.h"
 #include "pwm.h"
 
+#define FCYC 1843200
+#define MIN_DC (-10000)
+#define MAX_DC (+10000)
+
 void pwm_config() {
     PTCONbits.PTMOD = 0; //free running
     PTCONbits.PTCKPS = 0; // 1:1 Prescaler

@@ -7,6 +7,7 @@
 
 #include "xc.h"
 #include "uart.h"
+#include "config.h"
 #include <string.h>
 
 void UART_config() {

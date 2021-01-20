@@ -7,6 +7,7 @@
 
 #include "xc.h"
 #include "spi.h"
+#include "config.h"
 #include <stdio.h>
 
 //SPI configuration routine

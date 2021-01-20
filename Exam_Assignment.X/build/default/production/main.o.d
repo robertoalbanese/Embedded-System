@@ -1,10 +1,10 @@
 build/default/production/main.o:  \
 main.c  \
-config.h  \
 timer.h  \
 spi.h  \
+pwm.h  \
 parser.h  \
  uart.h  \
-pwm.h  \
 adc.h  \
-buttons.h 
+buttons.h  \
+config.h 

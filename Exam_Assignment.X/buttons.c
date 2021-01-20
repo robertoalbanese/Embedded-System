@@ -8,6 +8,7 @@
 
 #include "xc.h"
 #include "buttons.h"
+#include "config.h"
 
 // Function enabling interrupts of buttons
 
