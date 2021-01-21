@@ -2,9 +2,8 @@
  * File:   main.c
  * Author: ralba & andre
  *
- * Created on January 18, 2021, 10:59 AM
+ * Created on January 12, 2020, 6:46 PM
  */
-
 
 #pragma config FPR = XT                 // Primary Oscillator Mode (XT)
 #pragma config FOS = PRI                // Oscillator Source (Primary Oscillator)
@@ -46,7 +45,7 @@
 #include <string.h>
 
 typedef struct {
-    void (*task)(void*);
+    void *(*task)(void*);
     void *params;
     int n;
     int N;
@@ -62,41 +61,26 @@ typedef struct {
 
 //Tasks info structure
 heartbeat schedInfo[MAX_TASKS];
-//Timeout flag
-int timeout_flag;
 //Circular rx buffer for UART data
 uart_buffer buffer;
-//S5 button pressed flag
-int s5_flag;
-//S6 button pressed flag
-int s6_flag;
+//RPM data
+rpm_data rpm_info;
+//Structure deciding which format to display
+display_lcd display;
 //State of the program
 int state;
-//State enumeration
+//State (char))
 char state_info[] = {'C', 'T', 'H'};
 
 //This task receives an rpm value and uses it to generate a pwm signal
 
 void* task_pwm_control_motor(void* params) {
     rpm_data* data = (rpm_data*) params;
-    //If button s5 has been pressed we store the value 0 in the struc
-
-    if (s5_flag == 1) {
-        s5_flag = 0;
-        data->rpm1 = 0;
-        data->rpm2 = 0;
-    }
-    //After 5 secs with no reference signals we store the value in the struc
-    if (timeout_flag == 1) {
-        timeout_flag = 0;
-        data->rpm1 = 0;
-        data->rpm2 = 0;
-    }
     //Generate and send PWM signals
     sendPWM(data);
-
     return NULL;
 }
+// This tasks reads within the circular buffer and decode a new received message
 
 void* task_uart_reciver(void* params) {
     program_info* info = (program_info*) params;
@@ -109,7 +93,9 @@ void* task_uart_reciver(void* params) {
         parser = parse_byte(info->pstate, temp);
         if (parser == NEW_MESSAGE) {
             // Message Decoding Routine
+            // Message typer received HLREF
             if (strcmp(info->pstate->msg_type, "HLREF") == 0) {
+                //If we are in SAFE STATE, ignore the reference message
                 if (state == STATE_SAFE) {
                 } else {
                     if (state == STATE_TIMEOUT) {
@@ -125,6 +111,7 @@ void* task_uart_reciver(void* params) {
                     IFS0bits.T2IF = 0; // Set the timer flag to zero to be notified of a new event
                     T2CONbits.TON = 1; //starts the timer
                 }
+                // Message typer received HLREF
             } else if (strcmp(info->pstate->msg_type, "HLSAT") == 0) {
                 int tempMax, tempMin;
                 sscanf(info->pstate->msg_payload, "%d,%d", &tempMin, &tempMax);
@@ -140,6 +127,7 @@ void* task_uart_reciver(void* params) {
                     char ack[50] = "$MCACK,SAT,0*";
                     UART_sendMsg(ack);
                 }
+                // Message typer received HLREF
             } else if (strcmp(info->pstate->msg_type, "HLENA") == 0) {
                 if (state == STATE_SAFE) {
                     state = STATE_COMMAND;
@@ -214,11 +202,6 @@ void* task_led_blink(void* params) {
 void* task_print_lcd(void* params) {
     display_lcd* info = (display_lcd*) params;
     //If button s6 has been pressed, then we change the display
-    if (s6_flag == 1) {
-        s6_flag = 0;
-        //Change display index; in this way we change routine each time
-        info->index = !info->index;
-    }
     info->format[info->index](info->display_info);
     return NULL;
 }
@@ -276,8 +259,6 @@ int main(void) {
     display_info.rpm_info = &rpm_info;
     display_info.temp_info = &temperature;
 
-    //Structure deciding which format to display
-    display_lcd display;
     //Display lcd structure
     display.index = 0;
     display.display_info = &display_info;
@@ -327,17 +308,17 @@ int main(void) {
     schedInfo[5].n = 0;
     schedInfo[6].n = 0;
 
-    // Initialization of execution time for each task (t=N*1ms)
-    schedInfo[0].N = 1; //1 ms / 1kHz
-    schedInfo[1].N = 100; //100 ms / 10Hz
-    schedInfo[2].N = 100; //100 ms / 10Hz
-    schedInfo[3].N = 1000; //1000 ms /1Hz
-    schedInfo[4].N = 500; //500 ms / 1 Hz
-    schedInfo[5].N = 100; //500 ms
-    schedInfo[6].N = 200; //200 ms / 5Hz
+    // Initialization of execution time for each task (t=N*50ms)
+    schedInfo[0].N = 1; //Send pwm signal               20Hz
+    schedInfo[1].N = 2; //UART rx                       10Hz
+    schedInfo[2].N = 2; //Acquire temperature           10Hz
+    schedInfo[3].N = 20; //Send average temperature     1Hz
+    schedInfo[4].N = 10; //Leds blink                   1Hz
+    schedInfo[5].N = 2; //Print to lcd                  10Hz
+    schedInfo[6].N = 4; //Feedback msg                  5Hz
 
-    //Timer 1 config (control loop at 1kHz)
-    tmr_setup_period(TIMER1, 1);
+    //Timer 1 config (control loop at 20Hz)
+    tmr_setup_period(TIMER1, 50);
     //Timer 2 config (Timeout mode timer)
     tmr_setup_period(TIMER2, 5000);
 

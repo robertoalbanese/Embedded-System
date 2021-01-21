@@ -1,9 +1,16 @@
 /* 
  * File:   spi.h
- * Author:  andre & ralba
- * Comments:
- * Revision history: 
+ * Author: ralba & andre
+ *
+ * Created on January 12, 2020, 6:46 PM
  */
+/*
+ * File:   spi.h
+ * Author: ralba & andre
+ *
+ * Created on January 12, 2020, 6:46 PM
+ */
+
 #ifndef XC_HEADER_SPI_H
 #define XC_HEADER_SPI_H
 
@@ -22,7 +29,7 @@ typedef struct {
 } display_info;
 
 typedef struct {
-    void (*format[2])(display_info*);
+    void *(*format[2])(display_info*);
     display_info* display_info;
     int index;
 } display_lcd;

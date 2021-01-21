@@ -2,17 +2,19 @@
  * File:   adc.c
  * Author: ralba & andre
  *
- * Created on December 18, 2020, 6:46 PM
+ * Created on January 12, 2020, 6:46 PM
  */
 
 #include "xc.h"
+
+// Configuration of A/D converter 
 
 void adc_config() {
 
     ADCON3bits.ADCS = 8; //setting TAD
 
-    //manual sampling and manual conversion start
-    ADCON1bits.ASAM = 1; //how sampling start
+    //Automatic sampling and automatic conversion start
+    ADCON1bits.ASAM = 1; // Set auto start
     ADCON1bits.SSRC = 7;
     ADCON3bits.SAMC = 1; //1 Tad
     // channel selection to convert - select channel 0

@@ -1,8 +1,8 @@
 /* 
  * File:   timer.h
- * Author:  ralba & andre
- * Comments:
- * Revision history: 
+ * Author: ralba & andre
+ *
+ * Created on January 12, 2020, 6:46 PM
  */
 
 // This is a guard condition so that contents of this file are not included

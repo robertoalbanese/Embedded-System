@@ -1,3 +1,10 @@
+/*
+ * File:   parser.h
+ * Author: ralba & andre
+ *
+ * Created on January 12, 2020, 6:46 PM
+ */
+
 #ifndef XC_HEADER_PARSER_H
 #define XC_HEADER_PARSER_H
 

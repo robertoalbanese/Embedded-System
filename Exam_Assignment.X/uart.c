@@ -1,8 +1,8 @@
 /*
  * File:   uart.c
- * Author: andre
+ * Author: ralba & andre
  *
- * Created on 11 dicembre 2020, 15.48
+ * Created on January 12, 2020, 6:46 PM
  */
 
 #include "xc.h"
@@ -11,7 +11,7 @@
 #include <string.h>
 
 void UART_config() {
-    U2BRG = 11; // ((1843200) / (16 * 9600)) - 1
+    U2BRG = 47; // ((1843200) / (16 * 2400)) - 1 (Since we can process 10 messages per sec)
     U2MODEbits.UARTEN = 1; // enable UART
     U2STAbits.UTXEN = 1; // enable U1TX (must be after UARTEN)
     U2STAbits.URXISEL = 1;
@@ -35,13 +35,13 @@ int UART_buffDim(uart_buffer *buffer) {
     if (buffer->headIndex >= buffer->tailIndex)
         return (buffer->headIndex - buffer->tailIndex);
     else
-        return (TXDIM - (buffer->tailIndex - buffer->headIndex));
+        return (RXDIM - (buffer->tailIndex - buffer->headIndex));
 }
 
 void UART_writeOnBuffer(uart_buffer *buffer, int val) {
     buffer->buffer[buffer->headIndex] = val;
     buffer->headIndex++;
-    if (buffer->headIndex == TXDIM)
+    if (buffer->headIndex == RXDIM)
         buffer->headIndex = 0;
 }
 
@@ -54,7 +54,7 @@ char UART_readOnBuffer(uart_buffer *buffer) {
     }
     readChar = (char) buffer->buffer[buffer->tailIndex];
     buffer->tailIndex++;
-    if (buffer->tailIndex == TXDIM)
+    if (buffer->tailIndex == RXDIM)
         buffer->tailIndex = 0;
 
     IEC1bits.U2RXIE = 1; // Enable interrupt of UART

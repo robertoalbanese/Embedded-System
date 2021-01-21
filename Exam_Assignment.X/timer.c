@@ -1,13 +1,31 @@
 /*
  * File:   timerFunction.c
- * Author: francesco testa
+ * Author: ralba & andre
  *
- * Created on 12 ottobre 2020, 9.43
+ * Created on January 12, 2020, 6:46 PM
  */
 
 #include "xc.h"
 #include "timer.h"
 #include "config.h"
+
+// Timer 2 ISR - Set motor velocity to zeros and blink led D4
+// After 5 secs with no reference signals we store the value in the struc
+
+void __attribute__((__interrupt__, __auto_psv__)) _T2Interrupt() {
+    IEC0bits.T2IE = 0; // Disable interrupt of timer t2
+    // Set timeout state
+    state = STATE_TIMEOUT;
+    //Stop the motors and store the new rpm data in the global struct
+    rpm_info.rpm1 = 0;
+    rpm_info.rpm2 = 0;
+    // Stop asyncronously the motors
+    PDC2 = 0.5 * 2.0 * PTPER; //DutyCycle = 0.5 if rpm=0
+    PDC3 = 0.5 * 2.0 * PTPER; //DutyCycle = 0.5 if rpm=0
+
+    IFS0bits.T2IF = 0; // Reset interrupt flag for timer 2
+    T2CONbits.TON = 0; // Stop the timer
+}
 
 void choose_prescaler(int ms, int* pr, int* tckps) {
     long ticks = 1843.2 * ms;
@@ -130,20 +148,4 @@ void tmr_wait_period(int timer) {
             break;
         }
     }
-}
-
-// Timer 2 ISR - Set motor velocity to zeros and blink led D4
-void __attribute__((__interrupt__, __auto_psv__)) _T2Interrupt () {	
-    IEC0bits.T2IE = 0; // Disable interrupt of timer t2
-    //Set the flag high
-    timeout_flag = 1;
-     // Set timeout state
-    state = STATE_TIMEOUT;
-    
-    // Stop asyncronously the motors
-    PDC2 = 0.5 * 2.0 * PTPER;
-    PDC3 = 0.5 * 2.0 * PTPER;
-    
-    IFS0bits.T2IF = 0; // Reset interrupt flag for timer 2
-    T2CONbits.TON = 0; // Stop the timer
 }

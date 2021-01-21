@@ -3,4 +3,6 @@ buttons.c  \
 buttons.h  \
 timer.h  \
 config.h  \
- uart.h 
+ uart.h  \
+pwm.h  \
+spi.h 

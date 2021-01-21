@@ -2,19 +2,17 @@
  * File:   main.c
  * Author: ralba & andre
  *
- * Created on January 18, 2021, 10:59 AM
+ * Created on January 12, 2020, 6:46 PM
  */
 #ifndef XC_HEADER_CONFIG_H
 #define XC_HEADER_CONFIG_H
 
 #include <xc.h> 
 #include "uart.h"
+#include "pwm.h"
+#include "spi.h"
 
 #define MAX_TASKS 7
-#define TXDIM 100
-
-#define MAX_RPM (+8000)
-#define MIN_RPM (-8000)
 
 #define STATE_COMMAND 0
 #define STATE_TIMEOUT 1
@@ -22,12 +20,10 @@
 
 //Circular rx buffer for UART data
 extern uart_buffer buffer;
-//Timeout flag
-extern int timeout_flag;
-//S5 button pressed flag
-extern int s5_flag;
-//S6 button pressed flag
-extern int s6_flag;
+//RPM data
+extern rpm_data rpm_info;
+//Structure deciding which format to display
+extern display_lcd display;
 //State of the program
 extern int state;
 //State enumeration

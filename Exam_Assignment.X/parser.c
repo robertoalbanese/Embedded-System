@@ -1,8 +1,8 @@
 /*
  * File:   buttons.c
- * Author: ralba
+ * Author: ralba & andre
  *
- * Created on January 19, 2021, 3:39 PM
+ * Created on January 12, 2020, 6:46 PM
  */
 
 #include "xc.h"

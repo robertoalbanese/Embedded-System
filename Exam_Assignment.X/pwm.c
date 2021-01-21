@@ -1,8 +1,8 @@
 /*
  * File:   pwm.c
- * Author: ralba
+ * Author: ralba & andre
  *
- * Created on December 18, 2020, 6:49 PM
+ * Created on January 12, 2020, 6:46 PM
  */
 
 

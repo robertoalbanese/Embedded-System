@@ -1,8 +1,8 @@
 /*
  * File:   main.c
- * Author: Andrea Tiranti
+ * Author: ralba & andre
  *
- * Created on October 24, 2020, 4:03 PM
+ * Created on January 12, 2020, 6:46 PM
  */
 
 #include "xc.h"
@@ -72,10 +72,10 @@ void* displayCaseA(display_info* info) {
     char second_row[16];
 
     spi_clear_lcd();
-    //Temperature Display
+    //Display State and temperature in the first row
     sprintf(first_row, "ST:%c;T:%2.1f", state_info[state], info->temp_info->average);
     spi_send_string(first_row, 0x80);
-    //RPM Display: CHECK IF 2ND ROW VERY IMPORTANT
+    //Display current RPMs 
     sprintf(second_row, "R:%d,%d", info->rpm_info->rpm1, info->rpm_info->rpm2);
     spi_send_string(second_row, 0xC0);
     return NULL;
@@ -86,11 +86,11 @@ void* displayCaseB(display_info* info) {
     char second_row[16];
 
     spi_clear_lcd();
-    //Temperature Display
-    sprintf(first_row, "SA:%d,%d", info->rpm_info->minRPM, info->rpm_info->maxRPM);
+    //Display rpm saturation values
+    sprintf(first_row, "SA:%d;%d", info->rpm_info->minRPM, info->rpm_info->maxRPM);
     spi_send_string(first_row, 0x80);
-    //RPM Display: CHECK IF 2ND ROW VERY IMPORTANT
-    sprintf(second_row, "R:%1.2f,%1.2f", info->rpm_info->dutyCycle1, info->rpm_info->dutyCycle2);
+    //Display duty cycles 
+    sprintf(second_row, "R:%1.2f;%1.2f", info->rpm_info->dutyCycle1, info->rpm_info->dutyCycle2);
     spi_send_string(second_row, 0xC0);
     return NULL;
 }

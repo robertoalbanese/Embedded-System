@@ -1,16 +1,19 @@
 /* 
  * File:   uart.h
- * Author:  andre& ralba
- * Comments:
- * Revision history: 
+ * Author: ralba & andre
+ *
+ * Created on January 12, 2020, 6:46 PM
  */
 
 #ifndef XC_HEADER_UART_H
 #define XC_HEADER_UART_H
 
-#include <xc.h> // include processor files - each processor file is guarded.  
+#include <xc.h> // include processor files - each processor file is guarded.
+
+#define RXDIM 100
+
 typedef struct {
-    int buffer[100];
+    int buffer[RXDIM];
     int headIndex;
     int tailIndex;
     int unreadData;

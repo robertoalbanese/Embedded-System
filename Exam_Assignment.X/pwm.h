@@ -1,14 +1,17 @@
 /* 
  * File:   
  * Author: ralba & andre
- * Comments:
- * Revision history: 
+ *
+ * Created on January 12, 2020, 6:46 PM
  */
 
 #ifndef XC_HEADER_PWM_H
 #define XC_HEADER_PWM_H
 
 #include <xc.h> // include processor files - each processor file is guarded. 
+
+#define MAX_RPM (+8000)
+#define MIN_RPM (-8000)
 
 // Stores rpm values to control DC motors
 
