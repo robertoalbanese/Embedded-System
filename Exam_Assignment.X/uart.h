@@ -10,20 +10,19 @@
 
 #include <xc.h> // include processor files - each processor file is guarded.
 
-#define RXDIM 100
+#define RXDIM 100 //Max dimension of the circula buffer
 
+// Stores circular buffer data and read/write position
 typedef struct {
-    int buffer[RXDIM];
+    char buffer[RXDIM];
     int headIndex;
     int tailIndex;
-    int unreadData;
 } uart_buffer;
 
 void UART_config(); //Routine to configure UART
-void UART_bufferInit(uart_buffer *buffer);
-int UART_buffDim(uart_buffer *buffer);
-void UART_writeOnBuffer(uart_buffer *buffer, int val);
-char UART_readOnBuffer(uart_buffer *buffer);
-int UART_sendMsg(char* message);
+int UART_buffDim(uart_buffer *buffer); // This function checks the dimension of the circular buffer of unread data
+void UART_writeOnBuffer(uart_buffer *buffer, char val); //This task writes the new received character from the UART in the circular buffer
+char UART_readOnBuffer(uart_buffer *buffer); //This task reads the new received character from the UART in the circular buffer
+int UART_sendMsg(char* message); //This task sends an ASCII message to the PC
 
 #endif

@@ -10,6 +10,13 @@
 #include "config.h"
 #include <string.h>
 
+// ISR fo a new received character in the UART
+void __attribute__((__interrupt__, __auto_psv__)) _U2RXInterrupt() {
+    IFS1bits.U2RXIF = 0; // Reset rx interrupt flag
+    char val = U2RXREG; // Read from rx register
+    UART_writeOnBuffer(&buffer, val); // Save value in buffer
+}
+
 void UART_config() {
     U2BRG = 47; // ((1843200) / (16 * 2400)) - 1 (Since we can process 10 messages per sec)
     U2MODEbits.UARTEN = 1; // enable UART
@@ -19,17 +26,7 @@ void UART_config() {
     U2STAbits.URXISEL = 0b10; //0b10 for longer words
 }
 
-void __attribute__((__interrupt__, __auto_psv__)) _U2RXInterrupt() {
-    IFS1bits.U2RXIF = 0; // Reset rx interrupt flag
-    int val = U2RXREG; // Read from rx register
-    UART_writeOnBuffer(&buffer, val); // Save value in buffer
-}
-
-void UART_bufferInit(uart_buffer *buffer) {
-    buffer->headIndex = 0; //wrinting index
-    buffer->tailIndex = 0; //reading index
-    buffer->unreadData = 0;
-}
+// This function checks the dimension of the circular buffer of unread data
 
 int UART_buffDim(uart_buffer *buffer) {
     if (buffer->headIndex >= buffer->tailIndex)
@@ -37,13 +34,15 @@ int UART_buffDim(uart_buffer *buffer) {
     else
         return (RXDIM - (buffer->tailIndex - buffer->headIndex));
 }
+//This task writes the new received character from the UART in the circular buffer
 
-void UART_writeOnBuffer(uart_buffer *buffer, int val) {
+void UART_writeOnBuffer(uart_buffer *buffer, char val) {
     buffer->buffer[buffer->headIndex] = val;
     buffer->headIndex++;
     if (buffer->headIndex == RXDIM)
         buffer->headIndex = 0;
 }
+//This task reads the new received character from the UART in the circular buffer
 
 char UART_readOnBuffer(uart_buffer *buffer) {
     char readChar;
@@ -52,7 +51,7 @@ char UART_readOnBuffer(uart_buffer *buffer) {
         IEC1bits.U2RXIE = 1; // Enable interrupt of UART
         return 0;
     }
-    readChar = (char) buffer->buffer[buffer->tailIndex];
+    readChar = buffer->buffer[buffer->tailIndex];
     buffer->tailIndex++;
     if (buffer->tailIndex == RXDIM)
         buffer->tailIndex = 0;
@@ -61,6 +60,7 @@ char UART_readOnBuffer(uart_buffer *buffer) {
 
     return readChar;
 }
+//This task sends an ASCII message to the PC
 
 int UART_sendMsg(char* message) {
     char msg[50];

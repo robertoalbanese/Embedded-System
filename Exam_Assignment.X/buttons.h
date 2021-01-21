@@ -11,6 +11,6 @@
 #include <xc.h> 
 #include "timer.h"
 
-void buttons_config();
+void buttons_config(); // Configuration of buttons
 
 #endif

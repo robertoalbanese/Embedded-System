@@ -24,8 +24,8 @@ typedef struct {
     double dutyCycle2;
 } rpm_data;
 
-void pwm_config();
-void sendPWM(rpm_data* rpm_info);
-void satRPM(rpm_data* rpm_info);
+void pwm_config(); //Pwm configuration
+void sendPWM(rpm_data* rpm_info); // This task computes the duty cycle and send a pwm signal for both the motors
+void satRPM(rpm_data* rpm_info); //This task saturates the new received rpm values
 
 #endif

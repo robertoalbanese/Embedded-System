@@ -5,13 +5,14 @@
  * Created on January 12, 2020, 6:46 PM
  */
 
-
 #include "xc.h"
 #include "pwm.h"
 
-#define FCYC 1843200
-#define MIN_DC (-10000)
-#define MAX_DC (+10000)
+#define FCYC 1843200    //Clock frequency of the board
+#define MIN_DC (-10000) //Minimum velocity of the motors
+#define MAX_DC (+10000) //Maximum velocity of the motors
+
+//Pwm configuration
 
 void pwm_config() {
     PTCONbits.PTMOD = 0; //free running
@@ -23,6 +24,8 @@ void pwm_config() {
     PTCONbits.PTEN = 1; //Enable PWM
 }
 
+// This task computes the duty cycle and send a pwm signal for both the motors
+
 void sendPWM(rpm_data* rpm_info) {
     // Define the duty cycle
     rpm_info->dutyCycle1 = (rpm_info->rpm1 - MIN_DC) / (MAX_DC - MIN_DC);
@@ -32,6 +35,8 @@ void sendPWM(rpm_data* rpm_info) {
     PDC2 = rpm_info->dutyCycle1 * 2.0 * PTPER;
     PDC3 = rpm_info->dutyCycle2 * 2.0 * PTPER;
 }
+
+//This task saturates the new received rpm values
 
 void satRPM(rpm_data* rpm_info) {
 

@@ -66,6 +66,7 @@ void spi_send_string(char *s, char row) {
         i++;
     }
 }
+// First display case: here we show the program state, the average temperature and the current rpm values
 
 void* displayCaseA(display_info* info) {
     char first_row[16];
@@ -80,6 +81,7 @@ void* displayCaseA(display_info* info) {
     spi_send_string(second_row, 0xC0);
     return NULL;
 }
+//Second display case: here we show the new rpm boundaries and the duty cycles 
 
 void* displayCaseB(display_info* info) {
     char first_row[16];

@@ -10,6 +10,6 @@
 
 #include <xc.h> // include processor files - each processor file is guarded.
 
-void adc_config();
+void adc_config(); // Configuration of A/D converter 
 
 #endif

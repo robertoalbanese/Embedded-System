@@ -80,7 +80,7 @@ void* task_pwm_control_motor(void* params) {
     sendPWM(data);
     return NULL;
 }
-// This tasks reads within the circular buffer and decode a new received message
+// This task reads within the circular buffer and decode a new received message from the PC
 
 void* task_uart_reciver(void* params) {
     program_info* info = (program_info*) params;
@@ -93,16 +93,18 @@ void* task_uart_reciver(void* params) {
         parser = parse_byte(info->pstate, temp);
         if (parser == NEW_MESSAGE) {
             // Message Decoding Routine
-            // Message typer received HLREF
+            // Message typer received - HLREF
             if (strcmp(info->pstate->msg_type, "HLREF") == 0) {
                 //If we are in SAFE STATE, ignore the reference message
                 if (state == STATE_SAFE) {
                 } else {
+                    //If we are in TIMEOUT STATE, go back to COMMAND STATE
                     if (state == STATE_TIMEOUT) {
                         state = STATE_COMMAND;
                     }
+                    //Store new rpm values in the rpm struct
                     sscanf(info->pstate->msg_payload, "%d,%d", &info->rpm->rpm1, &info->rpm->rpm2);
-                    // Saturate RPM if they're above the allowed threshold
+                    // Saturate rpm if they're over the allowed threshold
                     satRPM(info->rpm);
                     //reset timer 2 and interrupt
                     T2CONbits.TON = 0; //starts the timer
@@ -111,24 +113,27 @@ void* task_uart_reciver(void* params) {
                     IFS0bits.T2IF = 0; // Set the timer flag to zero to be notified of a new event
                     T2CONbits.TON = 1; //starts the timer
                 }
-                // Message typer received HLREF
+                // Message type received - HLREF
             } else if (strcmp(info->pstate->msg_type, "HLSAT") == 0) {
                 int tempMax, tempMin;
+                //Store new rpm thresholds values in the rpm struct
                 sscanf(info->pstate->msg_payload, "%d,%d", &tempMin, &tempMax);
+                //Check if the new values are acceptable
                 if (tempMax < MAX_RPM && tempMax >= 0 && tempMin > MIN_RPM && tempMin <= 0) {
                     //Update rpm boundaries
                     info->rpm->maxRPM = tempMax;
                     info->rpm->minRPM = tempMin;
-                    //return positive feedback
+                    //Return positive feedback
                     char ack[50] = "$MCACK,SAT,1*";
                     UART_sendMsg(ack);
                 } else {
-                    //return negative feedback
+                    //If the new rpm thresholds are rejected, return negative feedback
                     char ack[50] = "$MCACK,SAT,0*";
                     UART_sendMsg(ack);
                 }
-                // Message typer received HLREF
+                // Message typer received - HLREF
             } else if (strcmp(info->pstate->msg_type, "HLENA") == 0) {
+                //If we are in the SAFE STATE, then we exit and we restart TIMER2 for the timeout condition
                 if (state == STATE_SAFE) {
                     state = STATE_COMMAND;
                     //reset timer 2 and interrupt
@@ -136,13 +141,13 @@ void* task_uart_reciver(void* params) {
                     IEC0bits.T2IE = 1; // Enable interrupt of timer t2
                     IFS0bits.T2IF = 0; // Set the timer flag to zero to be notified of a new event
                     T2CONbits.TON = 1; //starts the timer
-                    //return positive feedback
+                    //Return positive feedback
                     char ack[50] = "$MCACK,ENA,1*";
                     UART_sendMsg(ack);
-
+                    //Otherwise we do nothing
                 } else {
                     //do nothing or
-                    //return positive feedback
+                    //return negative feedback
                     /*ack={"$MCACK,ENA,0*"};
                     UART_sendMsg(ack);*/
                 }
@@ -151,6 +156,8 @@ void* task_uart_reciver(void* params) {
     }
     return NULL;
 }
+
+//This task reads temperature values from the sensor
 
 void* task_acquire_temperature(void* params) {
     temperature_info* temp_info = (temperature_info*) params;
@@ -162,7 +169,7 @@ void* task_acquire_temperature(void* params) {
     int tempBits = ADCBUF0;
     double tempVolts = (double) tempBits * 5.0 / 1024.0;
     temp_info->temperature = (tempVolts - 0.75)*100.0 + 25.0;
-    //Update FIFO buffer
+    //Update temperature FIFO buffer
     for (i = (sizeof (temp_info->temp_records) / sizeof (temp_info->temp_records[0])); i > 0; i--) {
         temp_info->temp_records[i] = temp_info->temp_records[i - 1];
     }
@@ -170,6 +177,7 @@ void* task_acquire_temperature(void* params) {
 
     return NULL;
 }
+// This task sends the current average value of the temperature. We compute it using the last ten values
 
 void* task_average_temperature(void* params) {
     temperature_info* temp_info = (temperature_info*) params;
@@ -187,6 +195,9 @@ void* task_average_temperature(void* params) {
 
     return NULL;
 }
+// This stask blinks led D3 and D4: 
+// - D3 blinks to show the correct execution of the program
+// - D4 blinks only if we are in TIMEOUT STATE
 
 void* task_led_blink(void* params) {
     //Blink D3
@@ -198,13 +209,15 @@ void* task_led_blink(void* params) {
         LATBbits.LATB1 = 0;
     return NULL;
 }
+// This task prints informations on the lcd 
 
 void* task_print_lcd(void* params) {
     display_lcd* info = (display_lcd*) params;
-    //If button s6 has been pressed, then we change the display
+    //If button s6 has been pressed, then the display changes (this is done in the button s& routine of the interrupt)
     info->format[info->index](info->display_info);
     return NULL;
 }
+// This task sends a feedback message to the PC
 
 void* task_send_feedback(void* params) {
     rpm_data* rpm_info = (rpm_data*) params;
@@ -232,22 +245,23 @@ int main(void) {
     pwm_config();
     UART_config();
     buttons_config();
-    UART_bufferInit(&buffer);
     // LED config
     TRISBbits.TRISB0 = 0;
     TRISBbits.TRISB1 = 0;
 
-    //RPM data
-    rpm_data rpm_info;
     // Initialization of rpm_info limits
     rpm_info.maxRPM = MAX_RPM;
     rpm_info.minRPM = MIN_RPM;
     // The motors are initially stopped
     rpm_info.rpm1 = 0;
     rpm_info.rpm2 = 0;
-    // Duty cycle at 50%
+    // Duty cycle at 50% (Motors stopped)
     rpm_info.dutyCycle1 = 0.5;
     rpm_info.dutyCycle2 = 0.5;
+
+    //Circular buffer init
+    buffer.headIndex = 0; //wrinting index
+    buffer.tailIndex = 0; //reading index
 
     //Temperature informations
     temperature_info temperature;
@@ -255,6 +269,7 @@ int main(void) {
     temperature.temperature = 0;
     temperature.average = 0;
 
+    //Display info initialization
     display_info display_info;
     display_info.rpm_info = &rpm_info;
     display_info.temp_info = &temperature;
@@ -271,6 +286,7 @@ int main(void) {
     pstate.index_payload = 0;
     pstate.index_type = 0;
 
+    //Configuration struct containing all the info struct of the program
     program_info program_info;
     program_info.buffer = &buffer;
     program_info.pstate = &pstate;
@@ -309,16 +325,16 @@ int main(void) {
     schedInfo[6].n = 0;
 
     // Initialization of execution time for each task (t=N*50ms)
-    schedInfo[0].N = 1; //Send pwm signal               20Hz
-    schedInfo[1].N = 2; //UART rx                       10Hz
-    schedInfo[2].N = 2; //Acquire temperature           10Hz
-    schedInfo[3].N = 20; //Send average temperature     1Hz
-    schedInfo[4].N = 10; //Leds blink                   1Hz
-    schedInfo[5].N = 2; //Print to lcd                  10Hz
-    schedInfo[6].N = 4; //Feedback msg                  5Hz
+    schedInfo[0].N = 1; //Send pwm signal               100Hz
+    schedInfo[1].N = 1; //UART rx                       100Hz
+    schedInfo[2].N = 10; //Acquire temperature          10Hz
+    schedInfo[3].N = 100; //Send average temperature    1Hz
+    schedInfo[4].N = 50; //Leds blink                   1Hz
+    schedInfo[5].N = 10; //Print to lcd                 10Hz
+    schedInfo[6].N = 20; //Feedback msg                 5Hz
 
-    //Timer 1 config (control loop at 20Hz)
-    tmr_setup_period(TIMER1, 50);
+    //Timer 1 config (control loop at 100Hz)
+    tmr_setup_period(TIMER1, 10);
     //Timer 2 config (Timeout mode timer)
     tmr_setup_period(TIMER2, 5000);
 
