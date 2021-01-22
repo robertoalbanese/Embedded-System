@@ -7,10 +7,7 @@
 
 #include "xc.h"
 #include "pwm.h"
-
-#define FCYC 1843200    //Clock frequency of the board
-#define MIN_DC (-10000) //Minimum velocity of the motors
-#define MAX_DC (+10000) //Maximum velocity of the motors
+#include "config.h"
 
 //Pwm configuration
 
@@ -20,11 +17,11 @@ void pwm_config() {
     PWMCON1bits.PEN2H = 1; //see manual
     PWMCON1bits.PEN3H = 1; //see manual
     //PTPER = [Fcy(=1843200)/Fpwm(=1000Hz)*PrescalerPWM] - 1 must be less then 32767 (15 bits))
-    PTPER = (FCYC / (1 * 1000)) - 1; //[Fcy / (1* 1kHz)] - 1
+    PTPER = (FCYC / (1 * F_PWM)) - 1; //[Fcy / (1* 1kHz)] - 1
     PTCONbits.PTEN = 1; //Enable PWM
 }
 
-// This task computes the duty cycle and send a pwm signal for both the motors
+// This function computes the duty cycle and send a pwm signal for both the motors
 
 void sendPWM(rpm_data* rpm_info) {
     // Define the duty cycle
@@ -36,7 +33,7 @@ void sendPWM(rpm_data* rpm_info) {
     PDC3 = rpm_info->dutyCycle2 * 2.0 * PTPER;
 }
 
-//This task saturates the new received rpm values
+//This function saturates the new received rpm values
 
 void satRPM(rpm_data* rpm_info) {
 

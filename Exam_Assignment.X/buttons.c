@@ -23,7 +23,7 @@ void buttons_config() {
 }
 
 // S5 button ISR
-// If button s5 has been pressed we store the value 0 in the rpm struct
+// If button s5 has been pressed we store the value 0 in the rpm struct and we pass to the SAFE STATE
 
 void __attribute__((__interrupt__, __auto_psv__)) _INT0Interrupt() {
     IFS0bits.INT0IF = 0; // Reset interrupt flag
@@ -46,6 +46,7 @@ void __attribute__((__interrupt__, __auto_psv__)) _INT0Interrupt() {
 }
 
 // S6 buttons ISR
+// If button s6 has been pressed we change the info to be displayed in the lcd
 
 void __attribute__((__interrupt__, __auto_psv__)) _INT1Interrupt() {
     IFS1bits.INT1IF = 0; // Reset interrupt flag

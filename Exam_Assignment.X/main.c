@@ -324,17 +324,17 @@ int main(void) {
     schedInfo[5].n = 0;
     schedInfo[6].n = 0;
 
-    // Initialization of execution time for each task (t=N*50ms)
-    schedInfo[0].N = 1; //Send pwm signal               100Hz
-    schedInfo[1].N = 1; //UART rx                       100Hz
-    schedInfo[2].N = 10; //Acquire temperature          10Hz
-    schedInfo[3].N = 100; //Send average temperature    1Hz
-    schedInfo[4].N = 50; //Leds blink                   1Hz
-    schedInfo[5].N = 10; //Print to lcd                 10Hz
-    schedInfo[6].N = 20; //Feedback msg                 5Hz
+    // Initialization of execution time for each task (t=N*5ms)
+    schedInfo[0].N = 1; //Send pwm signal               200Hz //Higher than the UART rx task, so that so we don't lose any data to send 
+    schedInfo[1].N = 2; //UART rx                       100Hz
+    schedInfo[2].N = 20; //Acquire temperature          10Hz
+    schedInfo[3].N = 200; //Send average temperature    1Hz
+    schedInfo[4].N = 100; //Leds blink                  2Hz (0.5 ms on and 0.5 ms off )
+    schedInfo[5].N = 20; //Print to lcd                 10Hz
+    schedInfo[6].N = 40; //Feedback msg                 5Hz
 
     //Timer 1 config (control loop at 100Hz)
-    tmr_setup_period(TIMER1, 10);
+    tmr_setup_period(TIMER1, 5);
     //Timer 2 config (Timeout mode timer)
     tmr_setup_period(TIMER2, 5000);
 

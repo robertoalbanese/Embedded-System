@@ -14,6 +14,8 @@
 
 #define MAX_TASKS 7
 
+#define FCYC 1843200    //Clock frequency of the board
+
 #define STATE_COMMAND 0
 #define STATE_TIMEOUT 1
 #define STATE_SAFE 2

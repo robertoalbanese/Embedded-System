@@ -10,7 +10,7 @@
 #include "config.h"
 
 // Timer 2 ISR - Set motor velocity to zeros and blink led D4
-// After 5 secs with no reference signals we store the value in the struc
+// After 5 secs with no reference signals we store the value in the struct and we pass to TIMEOUT MODE
 
 void __attribute__((__interrupt__, __auto_psv__)) _T2Interrupt() {
     IEC0bits.T2IE = 0; // Disable interrupt of timer t2
@@ -19,7 +19,7 @@ void __attribute__((__interrupt__, __auto_psv__)) _T2Interrupt() {
     //Stop the motors and store the new rpm data in the global struct
     rpm_info.rpm1 = 0;
     rpm_info.rpm2 = 0;
-    // Stop asyncronously the motors
+    // Stop asynchronously the motors
     PDC2 = 0.5 * 2.0 * PTPER; //DutyCycle = 0.5 if rpm=0
     PDC3 = 0.5 * 2.0 * PTPER; //DutyCycle = 0.5 if rpm=0
 

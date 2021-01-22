@@ -13,6 +13,11 @@
 #define MAX_RPM (+8000)
 #define MIN_RPM (-8000)
 
+#define MIN_DC (-10000) //Minimum velocity of the motors
+#define MAX_DC (+10000) //Maximum velocity of the motors
+
+#define F_PWM 1000
+
 // Stores rpm values to control DC motors
 
 typedef struct {

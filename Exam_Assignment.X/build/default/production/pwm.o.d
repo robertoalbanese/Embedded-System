@@ -1,3 +1,6 @@
 build/default/production/pwm.o:  \
 pwm.c  \
-pwm.h 
+pwm.h  \
+config.h  \
+uart.h  \
+spi.h 
